@@ -14,7 +14,7 @@ Commands (from `backend/`): `npm run dev` · `npm run typecheck` · `npm run lin
 6. **Imports:** `#alias/…` for cross-folder, relative within a module, always with the `.js` extension. Aliases are defined in `package.json` `imports` (`source` → `src/` for dev and typecheck, `default` → `dist/` for production); a new alias needs both entries.
 7. **Env vars** go through `src/config/env.ts` and `.env.example` only; never read `process.env` elsewhere.
 8. **HTTP:** follow standard method and status-code semantics.
-9. **Errors:** throw `AppError` subclasses from `#errors/app-error.js`; the central `errorHandler` builds the response. Never hand-build error JSON in new controller code. See [docs/conventions.md](docs/conventions.md#error-handling).
+9. **Errors:** throw `AppError` subclasses from `#errors/app-error.js` for expected (operational) failures; a plain `Error` for "can't happen" invariants. The central `errorHandler` builds the response. Never hand-build error JSON in new controller code. See [docs/conventions.md](docs/conventions.md#error-handling).
 10. **Where these docs are silent, follow standard practice** for the stack and state the assumption in your summary. **Stop and ask** before: adding a dependency, changing the schema or migrations, making a security/auth trade-off, deviating from a documented rule, or when a doc contradicts the code (don't silently follow either).
 11. **Keep guidance current.** If your change makes this file or a doc wrong, update it in the same change. Read [docs/maintaining-docs.md](docs/maintaining-docs.md) before editing any guidance `.md`.
 
