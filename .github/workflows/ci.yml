@@ -1,4 +1,4 @@
-name: CI
+name: npm checks
 
 on:
   pull_request:
