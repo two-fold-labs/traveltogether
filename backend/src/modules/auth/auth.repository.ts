@@ -19,8 +19,13 @@ const createGuestUser = async (userName: string) => {
     text,
     values,
   );
+  const user = result.rows[0];
 
-  return result.rows[0];
+  if (!user) {
+    throw new Error('Failed to create guest user.');
+  }
+
+  return user;
 };
 
 export { findUserById, createGuestUser };

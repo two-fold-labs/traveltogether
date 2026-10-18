@@ -1,3 +1,5 @@
+import { randomInt } from 'node:crypto';
+
 import jwt from 'jsonwebtoken';
 
 import { env } from '#config/env.js';
@@ -5,6 +7,7 @@ import { env } from '#config/env.js';
 import {
   AUTH_TOKEN_TTL_SECONDS,
   GUEST_NAME,
+  GUEST_NAME_SUFFIX_DIGITS,
   JWT_ALGORITHM,
 } from './auth.constants.js';
 import { createGuestUser, findUserById } from './auth.repository.js';
@@ -42,6 +45,14 @@ const toPublicUser = (
   };
 };
 
+const generateGuestName = (): string => {
+  const suffix = randomInt(10 ** GUEST_NAME_SUFFIX_DIGITS)
+    .toString()
+    .padStart(GUEST_NAME_SUFFIX_DIGITS, '0');
+
+  return `${GUEST_NAME} ${suffix}`;
+};
+
 // Reuses a valid session, otherwise creates a guest and issues a new token
 const resolveGuestSession = async (token: string | undefined) => {
   if (token) {
@@ -56,11 +67,7 @@ const resolveGuestSession = async (token: string | undefined) => {
     }
   }
 
-  const user = await createGuestUser(GUEST_NAME);
-
-  if (!user) {
-    throw new Error('Failed to create guest user.');
-  }
+  const user = await createGuestUser(generateGuestName());
 
   return { user: toPublicUser(user), newToken: signAuthToken(user.id) };
 };
