@@ -5,8 +5,8 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import './index.css';
+import AppRoutes from './app/AppRoutes.tsx';
 import AuthGate from './app/AuthGate.tsx';
-import App from './App.tsx';
 import theme from './theme/theme.ts';
 
 const queryClient = new QueryClient();
@@ -19,7 +19,7 @@ createRoot(document.getElementById('root')!).render(
         <GlobalStyles styles="@layer theme, base, mui, components, utilities;" />
         <ThemeProvider theme={theme}>
           <AuthGate>
-            <App />
+            <AppRoutes />
           </AuthGate>
         </ThemeProvider>
       </StyledEngineProvider>

@@ -4,17 +4,18 @@ import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { type FormEvent, useState } from 'react';
+import { Link } from 'react-router';
 
 import FormField from '@/components/ui/FormField';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import PresetChips from '@/components/ui/PresetChips';
+import { ROUTES } from '@/lib/routes';
 
 import { getArrivalPresets } from '../arrivalPresets';
 import { type CreateTripValues } from '../types';
 import DestinationField from './DestinationField';
 
 interface CreateTripFormProps {
-  onBack: () => void;
   onSubmit: (values: CreateTripValues) => void;
 }
 
@@ -54,7 +55,7 @@ const iconAdornment = (name: IconName) => ({
   ),
 });
 
-const CreateTripForm = ({ onBack, onSubmit }: CreateTripFormProps) => {
+const CreateTripForm = ({ onSubmit }: CreateTripFormProps) => {
   const [values, setValues] = useState(emptyValues);
   const [errors, setErrors] = useState<Errors>({});
   const [resetCount, setResetCount] = useState(0);
@@ -99,8 +100,9 @@ const CreateTripForm = ({ onBack, onSubmit }: CreateTripFormProps) => {
             variant="text"
             size="small"
             startIcon={<Icon name="arrowLeft" />}
-            onClick={onBack}
             className="-ml-2 text-primary"
+            component={Link}
+            to={ROUTES.HOME}
           >
             Home
           </Button>
