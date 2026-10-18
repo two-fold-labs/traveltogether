@@ -58,10 +58,6 @@ const resolveGuestSession = async (token: string | undefined) => {
 
   const user = await createGuestUser(GUEST_NAME);
 
-  if (!user) {
-    throw new Error('Failed to create guest user.');
-  }
-
   return { user: toPublicUser(user), newToken: signAuthToken(user.id) };
 };
 
