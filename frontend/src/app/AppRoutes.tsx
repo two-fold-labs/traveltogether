@@ -9,9 +9,9 @@ const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App />}>
+        <Route path={ROUTES.HOME} element={<App />}>
           <Route index element={<HomePage />} />
-          <Route path="create-trip" element={<CreateTripPage />} />
+          <Route path={ROUTES.CREATE_TRIP} element={<CreateTripPage />} />
         </Route>
 
         {/* Catch-all route redirecting to home */}
