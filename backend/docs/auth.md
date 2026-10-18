@@ -4,7 +4,7 @@ Read this when touching login, guests, JWT, cookies, or anything that needs "who
 
 ## Model
 
-- A guest is a **real `users` row** with `is_anonymous = true`, no email, no password. Currently every guest is named from the `GUEST_NAME` constant.
+- A guest is a **real `users` row** with `is_anonymous = true`, no email, no password.
 - Planned: upgrading to a permanent user = adding email + password hash to the **same row**, so the UUID never changes and trips stay attached.
 - No auth library. Hand-rolled with `jsonwebtoken` and `cookie-parser`.
 
