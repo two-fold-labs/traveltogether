@@ -5,6 +5,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import './index.css';
+import AuthGate from './app/AuthGate.tsx';
 import App from './App.tsx';
 import theme from './theme/theme.ts';
 
@@ -17,7 +18,9 @@ createRoot(document.getElementById('root')!).render(
       <StyledEngineProvider enableCssLayer>
         <GlobalStyles styles="@layer theme, base, mui, components, utilities;" />
         <ThemeProvider theme={theme}>
-          <App />
+          <AuthGate>
+            <App />
+          </AuthGate>
         </ThemeProvider>
       </StyledEngineProvider>
     </QueryClientProvider>

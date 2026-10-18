@@ -6,7 +6,7 @@ import { authKeys } from '../queryKeys';
 const useSession = () => {
   const queryResult = useQuery({
     queryKey: authKeys.session,
-    queryFn: ({ signal }) => guestLogin(signal),
+    queryFn: guestLogin,
     staleTime: Infinity,
     refetchOnWindowFocus: false,
     retry: false,
