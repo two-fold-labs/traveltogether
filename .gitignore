@@ -154,3 +154,6 @@ vite.config.ts.timestamp-*
 !.cursor/mcp.json
 
 plans/
+
+# Generated on the code-review runner. Not part of the repository.
+.code-review-pr.diff
