@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "tsx watch --conditions=source src/server.ts",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
@@ -19,13 +19,18 @@
   "license": "ISC",
   "dependencies": {
     "@googlemaps/places": "^3.0.0",
+    "cookie-parser": "^1.4.7",
     "dotenv": "^18.0.1",
     "express": "^5.2.1",
-    "pg": "^8.23.0"
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.23.0",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.6.2",
     "@types/pg": "^8.23.1",
     "eslint": "^10.11.0",
@@ -39,13 +44,45 @@
     "typescript-eslint": "^8.70.0"
   },
   "imports": {
-    "#config/*": "./dist/config/*",
-    "#constants/*": "./dist/constants/*",
-    "#integrations/*": "./dist/integrations/*",
-    "#models/*": "./dist/models/*",
-    "#modules/*": "./dist/modules/*",
-    "#schema/*": "./dist/schema/*",
-    "#utils/*": "./dist/utils/*",
-    "#types/*": "./dist/types/*"
+    "#config/*.js": {
+      "source": "./src/config/*.ts",
+      "default": "./dist/config/*.js"
+    },
+    "#constants/*.js": {
+      "source": "./src/constants/*.ts",
+      "default": "./dist/constants/*.js"
+    },
+    "#integrations/*.js": {
+      "source": "./src/integrations/*.ts",
+      "default": "./dist/integrations/*.js"
+    },
+    "#models/*.js": {
+      "source": "./src/models/*.ts",
+      "default": "./dist/models/*.js"
+    },
+    "#modules/*.js": {
+      "source": "./src/modules/*.ts",
+      "default": "./dist/modules/*.js"
+    },
+    "#schema/*.js": {
+      "source": "./src/schema/*.ts",
+      "default": "./dist/schema/*.js"
+    },
+    "#utils/*.js": {
+      "source": "./src/utils/*.ts",
+      "default": "./dist/utils/*.js"
+    },
+    "#types/*.js": {
+      "source": "./src/types/*.ts",
+      "default": "./dist/types/*.js"
+    },
+    "#errors/*.js": {
+      "source": "./src/errors/*.ts",
+      "default": "./dist/errors/*.js"
+    },
+    "#middlewares/*.js": {
+      "source": "./src/middlewares/*.ts",
+      "default": "./dist/middlewares/*.js"
+    }
   }
 }
