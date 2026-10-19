@@ -138,20 +138,23 @@ async function existingCommentLines(repo, pr, token) {
   }
 }
 
-async function postComment(repo, pr, token, commit, comment) {
+export function commentPayload(commit, comment) {
   const body = comment.body.includes(MARKER) ? comment.body : `${comment.body}\n\n${MARKER}`;
+  return {
+    body,
+    commit_id: commit,
+    path: comment.path,
+    line: comment.line,
+    side: "RIGHT",
+  };
+}
+
+async function postComment(repo, pr, token, commit, comment) {
   const { status, raw } = await request(
     "POST",
     `https://api.github.com/repos/${repo}/pulls/${pr}/comments`,
     token,
-    {
-      body,
-      commit_id: commit,
-      path: comment.path,
-      line: comment.line,
-      side: "RIGHT",
-      subject_type: "line",
-    },
+    commentPayload(commit, comment),
   );
   if (status !== 200 && status !== 201) {
     console.error(`comment failed (${status}) ${comment.path}:${comment.line}: ${raw}`);
@@ -174,7 +177,7 @@ async function run(reviewPath, diffPath) {
   let failures = 0;
   for (const comment of chosen) {
     const status = await postComment(repo, pr, token, commit, comment);
-    if (status === 200 || status === 201 || status === 422) continue;
+    if (status === 200 || status === 201) continue;
     failures += 1;
   }
   return failures ? 1 : 0;
@@ -221,6 +224,10 @@ function selfTest() {
   const chosen = selectComments(comments, valid, new Set());
   if (chosen.length !== 1 || chosen[0].line !== 3) {
     throw new Error(`expected one comment on line 3, got ${JSON.stringify(chosen)}`);
+  }
+  const posted = commentPayload("abc", chosen[0]);
+  if (posted.subject_type || posted.line !== 3 || posted.side !== "RIGHT" || !posted.body.includes(MARKER)) {
+    throw new Error(`unexpected comment payload: ${JSON.stringify(posted)}`);
   }
   console.log("self-test ok");
 }
