@@ -53,4 +53,5 @@ export const env = {
   port: port('PORT', 3000),
   databaseUrl,
   googleApiKey: required('GOOGLE_API_KEY'),
+  jwtSecret: required('JWT_SECRET'),
 } as const;

@@ -4,6 +4,6 @@ import { createTrip } from './trip.controller.js';
 
 const router = Router();
 
-router.post('/trips', createTrip);
+router.post('/', createTrip);
 
 export default router;
