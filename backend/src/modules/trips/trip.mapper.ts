@@ -1,4 +1,4 @@
-import type { LocationRow, Trip } from '../../models/trip.model.js';
+import type { LocationRow, Trip } from './trip.types.js';
 
 export function mapTrip(trip: Trip, location: LocationRow) {
   return {

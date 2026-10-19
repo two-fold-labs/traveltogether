@@ -1,68 +1,64 @@
+import { withTransaction } from '#config/db.js';
+import { NotFoundError, ValidationError } from '#errors/app-error.js';
 import { googlePlacesClient } from '#integrations/google/places/google-places.client.js';
 
-import {
-  LOCAL_DEV_CREATED_BY,
-  TRIP_STATUS,
-} from '../../constants/trip.constants.js';
 import { generateRandomString } from '../../shared/utils/generate-random-string.js';
 
 import { mapTrip } from './trip.mapper.js';
 import * as tripRepository from './trip.repository.js';
-
-type HttpError = Error & { statusCode?: number };
-
-const createHttpError = (message: string, statusCode: number): HttpError => {
-  const error: HttpError = new Error(message);
-
-  error.statusCode = statusCode;
-
-  return error;
-};
 
 const createTrip = async (
   name: string,
   destinationPlaceId: string,
   arriveBy: Date,
 ) => {
-  if (arriveBy.getTime() <= Date.now()) {
-    throw createHttpError("'arriveBy' must be in the future.", 400);
+  const placeDetails =
+    await googlePlacesClient.getPlaceDetails(destinationPlaceId);
+
+  if (!placeDetails) {
+    throw new ValidationError([
+      {
+        field: 'destinationPlaceId',
+        message: 'Destination place not found.',
+      },
+    ]);
   }
 
-  const details = await googlePlacesClient.getPlaceDetails(destinationPlaceId);
+  const tripDetails = await withTransaction(async () => {
+    const location = await tripRepository.insertLocation({
+      name: placeDetails.name,
+      address: placeDetails.address,
+      lat: placeDetails.lat,
+      lng: placeDetails.lng,
+    });
 
-  if (!details) {
-    throw createHttpError(
-      'Could not load destination coordinates for this place.',
-      400,
-    );
-  }
+    const trip = await tripRepository.insertTrip({
+      tripId: generateTripId(),
+      name,
+      arriveBy,
+      createdBy: '123',
+      destinationLocationId: location.id,
+    });
 
-  const persisted = await tripRepository.createLocationAndTrip({
-    tripId: generateRandomString(),
-    name,
-    arriveBy,
-    status: TRIP_STATUS.CREATED,
-    createdAt: new Date(),
-    createdBy: LOCAL_DEV_CREATED_BY,
-    destination: {
-      name: details.name,
-      address: details.address,
-      lat: details.lat,
-      lng: details.lng,
-    },
+    return { trip, location };
   });
 
-  return mapTrip(persisted.trip, persisted.location);
+  return mapTrip(tripDetails.trip, tripDetails.location);
 };
 
 const getTrip = async (tripId: string) => {
-  const persisted = await tripRepository.findTripWithDestination(tripId);
+  const tripDetails =
+    await tripRepository.findTripWithDestinationByTripId(tripId);
 
-  if (!persisted) {
-    throw createHttpError('Trip not found.', 404);
+  if (!tripDetails) {
+    throw new NotFoundError('Trip not found.');
   }
 
-  return mapTrip(persisted.trip, persisted.location);
+  return mapTrip(tripDetails.trip, tripDetails.location);
+};
+
+const generateTripId = () => {
+  return generateRandomString();
 };
 
 export { createTrip, getTrip };

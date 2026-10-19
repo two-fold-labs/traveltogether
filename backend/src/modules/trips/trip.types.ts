@@ -1,4 +1,4 @@
-import type { TripStatus } from '../constants/trip.constants.js';
+import { type TripStatus } from './trip.constants.js';
 
 export type Trip = {
   id: string;
@@ -19,4 +19,12 @@ export type LocationRow = {
   address: string | null;
   latitude: string;
   longitude: string;
+};
+
+export type TripWithDestinationRow = Trip & {
+  location_id: string;
+  location_name: string;
+  location_address: string | null;
+  location_latitude: string;
+  location_longitude: string;
 };

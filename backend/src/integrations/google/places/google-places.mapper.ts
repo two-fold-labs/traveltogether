@@ -7,10 +7,6 @@ type IAutocompletePlacesResponse =
 
 type IPlace = protos.google.maps.places.v1.IPlace;
 
-function isDefined<T>(value: T | null | undefined): value is T {
-  return value !== null;
-}
-
 export function mapAutocompleteResponse(
   response: IAutocompletePlacesResponse,
 ): PlaceSearchResponse {
@@ -19,7 +15,7 @@ export function mapAutocompleteResponse(
   for (const suggestion of response.suggestions ?? []) {
     const prediction = suggestion.placePrediction;
 
-    if (!isDefined(prediction)) {
+    if (!prediction) {
       continue;
     }
 
@@ -52,12 +48,7 @@ export function mapPlaceDetails(place: IPlace): PlaceDetails | null {
   const address = place.formattedAddress;
   const location = place.location;
 
-  if (
-    typeof id !== 'string' ||
-    typeof name !== 'string' ||
-    typeof address !== 'string' ||
-    !isDefined(location)
-  ) {
+  if (!id || !name || !address || !location) {
     return null;
   }
 

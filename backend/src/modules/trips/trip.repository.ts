@@ -1,71 +1,79 @@
-import { getDb, withTransaction } from '../../config/db.js';
-import type { TripStatus } from '../../constants/trip.constants.js';
-import type { LocationRow, Trip } from '../../models/trip.model.js';
+import { getDb } from '#config/db.js';
 
-interface CreateLocationAndTripParams {
+import type {
+  Trip,
+  LocationRow,
+  TripWithDestinationRow,
+} from './trip.types.js';
+
+interface InsertLocationParams {
+  name: string;
+  address: string;
+  lat: number;
+  lng: number;
+}
+
+interface InsertTripParams {
   tripId: string;
   name: string;
   arriveBy: Date;
-  status: TripStatus;
-  createdAt: Date;
   createdBy: string;
-  destination: { name: string; address: string; lat: number; lng: number };
+  destinationLocationId: string;
 }
 
-const createLocationAndTrip = async ({
+const insertLocation = async ({
+  name,
+  address,
+  lat,
+  lng,
+}: InsertLocationParams) => {
+  const db = getDb();
+
+  const result = await db.query<LocationRow>(
+    `INSERT INTO locations (name, address, latitude, longitude)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, name, address, latitude, longitude`,
+    [name, address, lat, lng],
+  );
+
+  const location = result.rows[0];
+
+  if (!location) {
+    throw new Error('Failed to insert location');
+  }
+
+  return location;
+};
+
+const insertTrip = async ({
   tripId,
   name,
   arriveBy,
-  status,
-  createdAt,
   createdBy,
-  destination,
-}: CreateLocationAndTripParams) => {
-  return withTransaction(async () => {
-    const db = getDb();
+  destinationLocationId,
+}: InsertTripParams) => {
+  const db = getDb();
 
-    const locationResult = await db.query<LocationRow>(
-      `INSERT INTO locations (name, address, latitude, longitude)
-       VALUES ($1, $2, $3, $4)
-       RETURNING id, name, address, latitude, longitude`,
-      [destination.name, destination.address, destination.lat, destination.lng],
-    );
-
-    const location = locationResult.rows[0];
-
-    if (!location) {
-      throw new Error('Failed to insert destination location.');
-    }
-
-    const tripResult = await db.query<Trip>(
-      `INSERT INTO trips (
+  const result = await db.query<Trip>(
+    `INSERT INTO trips (
          trip_id, name, arrive_by, status, created_at,
          destination_location_id, created_by
        )
        VALUES ($1, $2, $3, $4, $5, $6, $7)
        RETURNING *`,
-      [tripId, name, arriveBy, status, createdAt, location.id, createdBy],
-    );
+    [tripId, name, arriveBy, destinationLocationId, createdBy],
+  );
 
-    const trip = tripResult.rows[0];
+  const trip = result.rows[0];
 
-    if (!trip) {
-      throw new Error('Failed to insert trip.');
-    }
+  if (!trip) {
+    throw new Error('Failed to insert trip.');
+  }
 
-    return { trip, location };
-  });
+  return trip;
 };
 
-type TripWithDestinationRow = Trip & {
-  location_id: string;
-  location_name: string;
-  location_address: string | null;
-  location_latitude: string;
-  location_longitude: string;
-};
-
-const findTripWithDestination = async (tripId: string) => {
+const findTripWithDestinationByTripId = async (tripId: string) => {
   const db = getDb();
 
   const result = await db.query<TripWithDestinationRow>(
@@ -86,7 +94,7 @@ const findTripWithDestination = async (tripId: string) => {
   const row = result.rows[0];
 
   if (!row) {
-    return null;
+    return undefined;
   }
 
   const trip: Trip = {
@@ -113,4 +121,4 @@ const findTripWithDestination = async (tripId: string) => {
   return { trip, location };
 };
 
-export { createLocationAndTrip, findTripWithDestination };
+export { insertLocation, insertTrip, findTripWithDestinationByTripId };
