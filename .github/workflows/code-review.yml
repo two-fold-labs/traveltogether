@@ -9,7 +9,10 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: code-review-${{ github.event.pull_request.number }}
+  # A Prettier commit from github-actions[bot] must not cancel the review
+  # already running for the human push. Bot runs stay in their own group, and
+  # the job below skips them.
+  group: code-review-${{ github.event.pull_request.number }}-${{ github.actor == 'github-actions[bot]' && 'bot' || 'review' }}
   cancel-in-progress: true
 
 jobs:

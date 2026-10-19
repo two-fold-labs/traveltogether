@@ -49,33 +49,86 @@ export function changedLines(diff) {
   return lines;
 }
 
-function jsonObject(text) {
-  let stripped = text.trim();
-  if (stripped.startsWith("```")) {
-    stripped = stripped.slice(stripped.indexOf("\n") + 1);
-    if (stripped.trimEnd().endsWith("```")) {
-      stripped = stripped.trimEnd().slice(0, -3);
+function stripFence(text) {
+  const trimmed = text.trim();
+  if (!trimmed.startsWith("```")) return trimmed;
+  return trimmed.replace(/^```[a-zA-Z]*\n?/, "").replace(/\n?```$/, "").trim();
+}
+
+function balancedObjects(text) {
+  const found = [];
+  let start = -1;
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+
+  for (let index = 0; index < text.length; index += 1) {
+    const character = text[index];
+    if (inString) {
+      if (escaped) escaped = false;
+      else if (character === "\\") escaped = true;
+      else if (character === '"') inString = false;
+      continue;
+    }
+    if (character === '"') {
+      inString = true;
+      continue;
+    }
+    if (character === "{") {
+      if (depth === 0) start = index;
+      depth += 1;
+      continue;
+    }
+    if (character === "}" && depth > 0) {
+      depth -= 1;
+      if (depth === 0 && start >= 0) {
+        found.push(text.slice(start, index + 1));
+        start = -1;
+      }
     }
   }
-  const start = stripped.indexOf("{");
-  const end = stripped.lastIndexOf("}");
-  if (start < 0 || end < start) {
-    throw new Error("review output did not contain a JSON object");
+  return found;
+}
+
+function commentsObjectFromText(text) {
+  const fenced = stripFence(text);
+  for (const candidate of [text.trim(), fenced]) {
+    try {
+      const parsed = JSON.parse(candidate);
+      if (parsed && Array.isArray(parsed.comments)) return parsed;
+    } catch {
+      // The answer may surround the JSON with other text.
+    }
   }
-  const parsed = JSON.parse(stripped.slice(start, end + 1));
-  if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") {
-    throw new Error("review JSON must be an object");
+  const objects = balancedObjects(fenced);
+  for (let index = objects.length - 1; index >= 0; index -= 1) {
+    try {
+      const parsed = JSON.parse(objects[index]);
+      if (parsed && Array.isArray(parsed.comments)) return parsed;
+    } catch {
+      // Skip braces that are not a comments object.
+    }
   }
-  return parsed;
+  throw new Error("review output did not contain a comments list");
 }
 
 export function extractComments(payload) {
-  let data = jsonObject(payload);
-  if (typeof data.result === "string") data = jsonObject(data.result);
-  if (!Array.isArray(data.comments)) throw new Error("comments must be a list");
+  let text = payload;
+  try {
+    const outer = JSON.parse(payload.trim());
+    if (outer && typeof outer.result === "string") text = outer.result;
+    else if (outer && Array.isArray(outer.comments)) return cleanComments(outer.comments);
+  } catch {
+    // The file may already be the assistant text.
+  }
+  return cleanComments(commentsObjectFromText(text).comments);
+}
+
+function cleanComments(comments) {
+  if (!Array.isArray(comments)) throw new Error("comments must be a list");
 
   const cleaned = [];
-  for (const item of data.comments) {
+  for (const item of comments) {
     if (!item || typeof item !== "object") continue;
     const path = String(item.path ?? "")
       .replaceAll("\\", "/")
@@ -218,6 +271,16 @@ function selfTest() {
     ].join("\n"),
   });
   const comments = extractComments(payload);
+  const noisy = JSON.stringify({
+    type: "result",
+    result: `Earlier note { "path": "not-the-review" }.\n${JSON.stringify({
+      comments: [{ path: file, line: 3, body: "EXTRA is a new flag with no reader." }],
+    })}`,
+  });
+  const fromNoisy = extractComments(noisy);
+  if (fromNoisy.length !== 1 || fromNoisy[0].path !== file) {
+    throw new Error(`noisy agent output parsed wrong: ${JSON.stringify(fromNoisy)}`);
+  }
   if (selectComments(comments, valid, new Set([`${file}:3`])).length !== 0) {
     throw new Error("duplicate comment was not skipped");
   }
