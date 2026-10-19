@@ -1,13 +1,12 @@
-import { APIProvider } from '@vis.gl/react-google-maps';
 import { Outlet } from 'react-router';
 
 import Header from './components/layout/header/Header';
 
-const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
 
 function App() {
   return (
-    <APIProvider apiKey={apiKey}>
+    <>
       <div className="flex h-dvh flex-col">
         <Header />
         <Outlet />
@@ -31,7 +30,7 @@ function App() {
             <LocationShare />
           </Grid>
         </Grid> */}
-    </APIProvider>
+    </>
   );
 }
 
