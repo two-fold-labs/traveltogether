@@ -152,3 +152,5 @@ vite.config.ts.timestamp-*
 # Local Cursor files. Shared project MCP is `.cursor/mcp.json` (and root `.mcp.json`).
 .cursor/*
 !.cursor/mcp.json
+
+plans/
