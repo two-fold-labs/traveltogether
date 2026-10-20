@@ -1,6 +1,6 @@
-import type { LocationRow, TripRow } from './trip.types.js';
+import type { LocationRow, PublicTrip, TripRow } from './trip.types.js';
 
-export function mapTrip(trip: TripRow, location: LocationRow) {
+export function mapTrip(trip: TripRow, location: LocationRow): PublicTrip {
   return {
     tripId: trip.trip_id,
     name: trip.name,
@@ -10,8 +10,8 @@ export function mapTrip(trip: TripRow, location: LocationRow) {
     destination: {
       name: location.name,
       address: location.address ?? '',
-      lat: location.latitude,
-      lng: location.longitude,
+      lat: Number(location.latitude),
+      lng: Number(location.longitude),
     },
   };
 }

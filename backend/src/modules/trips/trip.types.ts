@@ -21,6 +21,20 @@ export type LocationRow = {
   longitude: string;
 };
 
+export type PublicTrip = {
+  tripId: string;
+  name: string;
+  arriveBy: Date | null;
+  status: TripStatus;
+  createdAt: Date;
+  destination: {
+    name: string;
+    address: string;
+    lat: number;
+    lng: number;
+  };
+};
+
 export type TripWithDestinationRow = TripRow & {
   location_id: string;
   location_name: string;

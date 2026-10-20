@@ -25,7 +25,7 @@ const createTrip = async (
     ]);
   }
 
-  const tripDetails = await withTransaction(async () => {
+  const tripWithDestination = await withTransaction(async () => {
     const location = await tripRepository.insertLocation({
       name: placeDetails.name,
       address: placeDetails.address,
@@ -44,7 +44,7 @@ const createTrip = async (
     return { trip, location };
   });
 
-  return mapTrip(tripDetails.trip, tripDetails.location);
+  return mapTrip(tripWithDestination.trip, tripWithDestination.location);
 };
 
 const getTrip = async (tripId: string) => {
