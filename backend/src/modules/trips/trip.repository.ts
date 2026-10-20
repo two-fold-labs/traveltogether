@@ -59,17 +59,13 @@ const insertTrip = async ({
          trip_id, name, arrive_by,
          destination_location_id, created_by)
        VALUES ($1, $2, $3, $4, $5)
+       ON CONFLICT (trip_id) DO NOTHING
        RETURNING *`,
     [tripId, name, arriveBy, destinationLocationId, createdBy],
   );
 
-  const trip = result.rows[0];
-
-  if (!trip) {
-    throw new Error('Failed to insert trip.');
-  }
-
-  return trip;
+  // undefined means trip_id already exists; the caller retries with a new ID.
+  return result.rows[0];
 };
 
 const findTripWithDestinationByTripId = async (tripId: string) => {
