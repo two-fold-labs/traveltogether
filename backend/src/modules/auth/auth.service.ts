@@ -15,7 +15,7 @@ import { jwtPayloadSchema } from './auth.schema.js';
 import type { PublicUser, User } from './auth.types.js';
 
 const signAuthToken = (userId: string): string => {
-  return jwt.sign({ userId }, env.jwtToken, {
+  return jwt.sign({ userId }, env.jwtSecret, {
     algorithm: JWT_ALGORITHM,
     expiresIn: AUTH_TOKEN_TTL_SECONDS,
   });
@@ -23,7 +23,7 @@ const signAuthToken = (userId: string): string => {
 
 const getUserIdFromToken = (token: string): string | null => {
   try {
-    const decoded = jwt.verify(token, env.jwtToken, {
+    const decoded = jwt.verify(token, env.jwtSecret, {
       algorithms: [JWT_ALGORITHM],
     });
     const parsed = jwtPayloadSchema.safeParse(decoded);

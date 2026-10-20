@@ -1,21 +1,72 @@
-name: CI
+name: npm checks
 
 on:
   pull_request:
+
+permissions:
+  contents: read
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  prettier:
+    name: Prettier
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      sha: ${{ steps.sha.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.repo.full_name == github.repository && github.head_ref || github.sha }}
+          fetch-depth: 2
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: |
+            frontend/package-lock.json
+            backend/package-lock.json
+
+      - name: Format frontend
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run format
+
+      - name: Format backend
+        working-directory: backend
+        run: |
+          npm ci
+          npm run format
+
+      - uses: stefanzweifel/git-auto-commit-action@v5
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        with:
+          commit_message: "style: apply Prettier"
+          file_pattern: frontend backend
+          commit_user_name: github-actions[bot]
+          commit_user_email: 41898282+github-actions[bot]@users.noreply.github.com
+
+      - name: Resolve SHA
+        id: sha
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
   frontend:
     name: Frontend checks
+    needs: prettier
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: frontend
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.prettier.outputs.sha }}
       - uses: actions/setup-node@v5
         with:
           node-version: "22"
@@ -28,12 +79,15 @@ jobs:
 
   backend:
     name: Backend checks
+    needs: prettier
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: backend
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ needs.prettier.outputs.sha }}
       - uses: actions/setup-node@v5
         with:
           node-version: "22"
