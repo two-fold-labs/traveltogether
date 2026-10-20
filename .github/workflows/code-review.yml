@@ -35,9 +35,10 @@ jobs:
       - name: Write pull request diff
         id: diff
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
         run: |
-          git diff --unified=3 "$BASE_SHA"...HEAD > .code-review-pr.diff
+          git fetch --no-tags origin "$BASE_REF"
+          git diff --unified=3 "origin/${BASE_REF}"...HEAD > .code-review-pr.diff
           if [ -s .code-review-pr.diff ]; then
             echo "has_diff=true" >> "$GITHUB_OUTPUT"
           else
@@ -46,6 +47,9 @@ jobs:
 
       - name: Install Cursor CLI
         if: ${{ success() && steps.diff.outputs.has_diff == 'true' }}
+        env:
+          GH_TOKEN: ""
+          GITHUB_TOKEN: ""
         run: |
           curl https://cursor.com/install -fsS | bash
           echo "$HOME/.cursor/bin" >> "$GITHUB_PATH"
