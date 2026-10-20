@@ -1,37 +1,119 @@
-import db from '../../config/db.js';
-import type { TripStatus } from '../../constants/trip.constants.js';
-import type { Trip } from '../../models/trip.model.js';
+import { getDb } from '#config/db.js';
 
-interface CreateTripParams {
+import type {
+  TripRow,
+  LocationRow,
+  TripWithDestinationRow,
+} from './trip.types.js';
+
+interface InsertLocationInput {
+  name: string;
+  address: string;
+  lat: number;
+  lng: number;
+}
+
+interface InsertTripInput {
   tripId: string;
   name: string;
   arriveBy: Date;
-  status: TripStatus;
-  createdAt: Date;
+  createdBy: string;
   destinationLocationId: string;
 }
 
-const createTrip = async ({
+const insertLocation = async ({
+  name,
+  address,
+  lat,
+  lng,
+}: InsertLocationInput) => {
+  const db = getDb();
+
+  const result = await db.query<LocationRow>(
+    `INSERT INTO locations (name, address, latitude, longitude)
+       VALUES ($1, $2, $3, $4)
+       RETURNING id, name, address, latitude, longitude`,
+    [name, address, lat, lng],
+  );
+
+  const location = result.rows[0];
+
+  if (!location) {
+    throw new Error('Failed to insert location');
+  }
+
+  return location;
+};
+
+const insertTrip = async ({
   tripId,
   name,
   arriveBy,
-  status,
-  createdAt,
+  createdBy,
   destinationLocationId,
-}: CreateTripParams) => {
-  const text = `INSERT INTO trips (trip_id, name, arrive_by, status, created_at, destination_location_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`;
-  const values = [
-    tripId,
-    name,
-    arriveBy,
-    status,
-    createdAt,
-    destinationLocationId,
-  ];
+}: InsertTripInput) => {
+  const db = getDb();
 
-  const result = await db.query<Trip>(text, values);
+  const result = await db.query<TripRow>(
+    `INSERT INTO trips (
+         trip_id, name, arrive_by,
+         destination_location_id, created_by)
+       VALUES ($1, $2, $3, $4, $5)
+       ON CONFLICT (trip_id) DO NOTHING
+       RETURNING *`,
+    [tripId, name, arriveBy, destinationLocationId, createdBy],
+  );
 
+  // undefined means trip_id already exists; the caller retries with a new ID.
   return result.rows[0];
 };
 
-export { createTrip };
+const findTripWithDestinationByTripId = async (tripId: string) => {
+  const db = getDb();
+
+  const result = await db.query<TripWithDestinationRow>(
+    `SELECT
+       t.id, t.trip_id, t.name, t.arrive_by, t.status, t.created_at,
+       t.started_at, t.ended_at, t.destination_location_id, t.created_by,
+       l.id AS location_id,
+       l.name AS location_name,
+       l.address AS location_address,
+       l.latitude AS location_latitude,
+       l.longitude AS location_longitude
+     FROM trips t
+     INNER JOIN locations l ON l.id = t.destination_location_id
+     WHERE t.trip_id = $1`,
+    [tripId],
+  );
+
+  const row = result.rows[0];
+
+  if (!row) {
+    return undefined;
+  }
+
+  const trip: TripRow = {
+    id: row.id,
+    trip_id: row.trip_id,
+    name: row.name,
+    arrive_by: row.arrive_by,
+    status: row.status,
+    created_at: row.created_at,
+    started_at: row.started_at,
+    ended_at: row.ended_at,
+    destination_location_id: row.destination_location_id,
+    created_by: row.created_by,
+  };
+
+  const location: LocationRow = {
+    id: row.location_id,
+    name: row.location_name,
+    address: row.location_address,
+    latitude: row.location_latitude,
+    longitude: row.location_longitude,
+  };
+
+  return { trip, location };
+};
+
+export { insertLocation, insertTrip, findTripWithDestinationByTripId };
