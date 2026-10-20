@@ -34,7 +34,7 @@ Hand-written, in `<entity>.types.ts`, mirroring the table **exactly**:
 | `jsonb`              | parsed value; treat as `unknown` and validate with zod |
 | nullable column      | `T \| null` (pg returns `null`, never `undefined`)     |
 
-Include generated columns (`id`, `created_at`). For inserts, take a small argument object/params instead of the full row type.
+Include generated columns (`id`, `created_at`). For inserts, take a small argument object (`Insert<Entity>Input`, see [architecture.md](architecture.md#types-where-each-lives)) instead of the full row type.
 
 Update the row type in the same change as the migration.
 

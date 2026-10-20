@@ -20,6 +20,7 @@ src/
     ├── <entity>.controller.ts
     ├── <entity>.service.ts
     ├── <entity>.repository.ts
+    ├── <entity>.mapper.ts      # row → public; only when several service functions share it
     ├── <entity>.schema.ts      # zod: inputs (body, cookies, query, params, JWT payload)
     ├── <entity>.types.ts       # row type + public type
     └── <entity>.constants.ts
@@ -27,7 +28,7 @@ src/
 
 Naming: the folder is the plural resource name (`trips/`, `places/`); the file prefix is the singular noun (`trip.controller.ts`). Where they are the same word (`auth/auth.service.ts`), use it for both.
 
-Create a file only when it has content. A small module may skip `schema`, `types` or `constants`; never create empty placeholders or pass-through layers.
+Create a file only when it has content. A small module may skip `schema`, `types`, `mapper` or `constants`; never create empty placeholders or pass-through layers.
 
 Legacy, don't add to these: `src/models/` (row types now live in `<entity>.types.ts`) and the module-specific files in `src/types/` (`location.types.ts`, `place.types.ts`).
 
@@ -46,14 +47,17 @@ A controller does four things: **parse input → call service → set status/coo
 
 ## Types: where each lives
 
-| Type                  | What                                                             | Where                                            |
-| --------------------- | ---------------------------------------------------------------- | ------------------------------------------------ |
-| Row (`User`)          | one table row, every column, snake_case, nullable as `T \| null` | `<entity>.types.ts`                              |
-| Narrowed row          | a query returning fewer columns                                  | `Pick<Row, …>` inline, derived from the row type |
-| Public (`PublicUser`) | what the API exposes, camelCase, no secrets                      | `<entity>.types.ts`                              |
-| Input                 | request shape                                                    | `z.infer` of the schema in `<entity>.schema.ts`  |
+| Type         | What                                                             | Where                                            |
+| ------------ | ---------------------------------------------------------------- | ------------------------------------------------ |
+| Row          | one table row, every column, snake_case, nullable as `T \| null` | `<entity>.types.ts`                              |
+| Narrowed row | a query returning fewer columns                                  | `Pick<Row, …>` inline, derived from the row type |
+| Repo input   | arguments of one repository function (usually an insert/update)  | the repository file, not exported unless needed  |
+| Request      | validated client input                                           | `z.infer` of the schema in `<entity>.schema.ts`  |
+| Public       | what the API exposes, camelCase, no secrets                      | `<entity>.types.ts`                              |
 
-Mapping row → public happens **once, in the service** (`toPublicUser`). Controllers only ever see public types. Details on row types: [database.md](database.md).
+Type names: [conventions.md](conventions.md#naming). Don't write a type nothing uses yet.
+
+Mapping row → public happens **once, in the service** (`toPublicUser`, or a `<entity>.mapper.ts` function the service calls). Type its return value with the public type; it is the API contract. Controllers only ever see public types. Details on row types: [database.md](database.md).
 
 When a second module needs a type or constant, move it to `src/types/` or `src/constants/`. Not before.
 
