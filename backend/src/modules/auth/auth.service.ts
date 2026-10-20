@@ -53,17 +53,27 @@ const generateGuestName = (): string => {
   return `${GUEST_NAME} ${suffix}`;
 };
 
+const verifyTokenAndGetUser = async (token: string) => {
+  const userId = getUserIdFromToken(token);
+
+  if (userId) {
+    const user = await findUserById(userId);
+
+    if (user) {
+      return toPublicUser(user);
+    }
+  }
+
+  return null;
+};
+
 // Reuses a valid session, otherwise creates a guest and issues a new token
 const resolveGuestSession = async (token: string | undefined) => {
   if (token) {
-    const userId = getUserIdFromToken(token);
+    const user = await verifyTokenAndGetUser(token);
 
-    if (userId) {
-      const user = await findUserById(userId);
-
-      if (user) {
-        return { user: toPublicUser(user), newToken: null };
-      }
+    if (user) {
+      return { user, newToken: null };
     }
   }
 
@@ -72,4 +82,4 @@ const resolveGuestSession = async (token: string | undefined) => {
   return { user: toPublicUser(user), newToken: signAuthToken(user.id) };
 };
 
-export { resolveGuestSession };
+export { resolveGuestSession, verifyTokenAndGetUser };

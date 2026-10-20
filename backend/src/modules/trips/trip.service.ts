@@ -11,6 +11,7 @@ const createTrip = async (
   name: string,
   destinationPlaceId: string,
   arriveBy: Date,
+  userId: string,
 ) => {
   const placeDetails =
     await googlePlacesClient.getPlaceDetails(destinationPlaceId);
@@ -36,7 +37,7 @@ const createTrip = async (
       tripId: generateTripId(),
       name,
       arriveBy,
-      createdBy: '123',
+      createdBy: userId,
       destinationLocationId: location.id,
     });
 
@@ -47,14 +48,14 @@ const createTrip = async (
 };
 
 const getTrip = async (tripId: string) => {
-  const tripDetails =
+  const tripWithDestination =
     await tripRepository.findTripWithDestinationByTripId(tripId);
 
-  if (!tripDetails) {
+  if (!tripWithDestination) {
     throw new NotFoundError('Trip not found.');
   }
 
-  return mapTrip(tripDetails.trip, tripDetails.location);
+  return mapTrip(tripWithDestination.trip, tripWithDestination.location);
 };
 
 const generateTripId = () => {

@@ -1,19 +1,19 @@
 import { getDb } from '#config/db.js';
 
 import type {
-  Trip,
+  TripRow,
   LocationRow,
   TripWithDestinationRow,
 } from './trip.types.js';
 
-interface InsertLocationParams {
+interface InsertLocationInput {
   name: string;
   address: string;
   lat: number;
   lng: number;
 }
 
-interface InsertTripParams {
+interface InsertTripInput {
   tripId: string;
   name: string;
   arriveBy: Date;
@@ -26,7 +26,7 @@ const insertLocation = async ({
   address,
   lat,
   lng,
-}: InsertLocationParams) => {
+}: InsertLocationInput) => {
   const db = getDb();
 
   const result = await db.query<LocationRow>(
@@ -51,15 +51,14 @@ const insertTrip = async ({
   arriveBy,
   createdBy,
   destinationLocationId,
-}: InsertTripParams) => {
+}: InsertTripInput) => {
   const db = getDb();
 
-  const result = await db.query<Trip>(
+  const result = await db.query<TripRow>(
     `INSERT INTO trips (
-         trip_id, name, arrive_by, status, created_at,
-         destination_location_id, created_by
-       )
-       VALUES ($1, $2, $3, $4, $5, $6, $7)
+         trip_id, name, arrive_by,
+         destination_location_id, created_by)
+       VALUES ($1, $2, $3, $4, $5)
        RETURNING *`,
     [tripId, name, arriveBy, destinationLocationId, createdBy],
   );
@@ -97,7 +96,7 @@ const findTripWithDestinationByTripId = async (tripId: string) => {
     return undefined;
   }
 
-  const trip: Trip = {
+  const trip: TripRow = {
     id: row.id,
     trip_id: row.trip_id,
     name: row.name,

@@ -19,8 +19,8 @@ const getTripSchema = z.object({
   tripId: z.string().trim().min(1).max(12),
 });
 
-export type GetTripRequest = z.infer<typeof getTripSchema>;
+export type GetTripParams = z.infer<typeof getTripSchema>;
 
-export type CreateTripRequest = z.infer<typeof createTripSchema>;
+export type CreateTripBody = z.infer<typeof createTripSchema>;
 
 export { createTripSchema, getTripSchema };
