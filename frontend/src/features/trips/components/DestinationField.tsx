@@ -8,23 +8,20 @@ import { useState } from 'react';
 
 import { Icon } from '@/components/ui/Icon';
 
-import { mockLocations } from '../mockLocations';
-import { type LocationOption } from '../types';
+import { usePlaceSearch } from '../hooks/usePlaceSearch';
+import type { PlaceSuggestion } from '../types';
 
 interface DestinationFieldProps {
   id: string;
-  value: LocationOption | null;
-  onChange: (value: LocationOption | null) => void;
+  value: PlaceSuggestion | null;
+  onChange: (value: PlaceSuggestion | null) => void;
   error?: string;
 }
 
-const filterLocations = (options: LocationOption[], query: string) => {
+const filterLocations = (options: PlaceSuggestion[], query: string) => {
   const q = query.trim().toLowerCase();
 
-  return options.filter(
-    ({ name, category }) =>
-      name.toLowerCase().includes(q) || category.toLowerCase().includes(q),
-  );
+  return options.filter(({ name }) => name.toLowerCase().includes(q));
 };
 
 const DestinationField = ({
@@ -35,11 +32,14 @@ const DestinationField = ({
 }: DestinationFieldProps) => {
   const [inputValue, setInputValue] = useState(value?.name ?? '');
 
+  // Todo: Remove hardcode latitude and longitude
+  const { data } = usePlaceSearch(inputValue, '28.457523', '77.026344');
+
   return (
     <Stack spacing={3}>
       <Autocomplete
         id={id}
-        options={mockLocations}
+        options={data || []}
         value={value}
         onChange={(_, next) => onChange(next)}
         inputValue={inputValue}
@@ -65,7 +65,7 @@ const DestinationField = ({
                 className="min-w-0 items-center"
               >
                 <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-xs text-brand-600">
-                  <Icon name={option.icon} />
+                  <Icon name="house" /> {/* Todo: Hardcoded icon */}
                 </span>
                 <span className="min-w-0">
                   <Typography variant="body2" className="truncate font-bold">
@@ -76,11 +76,11 @@ const DestinationField = ({
                     color="text.secondary"
                     className="block font-normal"
                   >
-                    {option.dist} • ~{option.drive}
+                    {option.distanceMeters} {/*• ~{option.drive} */}
                   </Typography>
                 </span>
               </Stack>
-              <Chip label={option.tag} size="small" />
+              {/* <Chip label={option.tag} size="small" /> */}
             </Stack>
           </li>
         )}
@@ -124,7 +124,7 @@ const DestinationField = ({
                 color="text.secondary"
                 className="block font-normal"
               >
-                {value.dist} from Start • Est. {value.drive}
+                {value.distanceMeters} {/*from Start • Est. {value.drive}*/}
               </Typography>
             </span>
           </Stack>
