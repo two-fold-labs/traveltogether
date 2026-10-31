@@ -1,11 +1,15 @@
 ---
 name: jira-ticket
-description: Draft and create a well-formed Jira ticket in the trip-tracker project (TT) for a Story, Subtask, Issue/bug, Improvement/refactor, Idea, or Epic. Use whenever work is identified but postponed ("later", "out of scope", "not now", a TODO, a known limitation, a bug noticed while doing something else), or when the user asks to log, track, or create a ticket.
+description: Draft and create a well-formed Jira ticket in the trip-tracker project (TT) for a Story, Subtask, Issue/bug, Improvement/refactor, Idea, or Epic. Use whenever work is identified but postponed ("later", "out of scope", "not now", a TODO, a known limitation, a bug noticed while doing something else), when part of the current task is left unfinished and should be split out so the main feature can ship working for the user, or when the user asks to log, track, or create a ticket.
 ---
 
 # Jira ticket for trip-tracker
 
 Turn something we decided not to do right now into a ticket that makes sense weeks later with no other context.
+
+Two cases:
+- **Deferred:** something new came up that's out of scope for the current work.
+- **Split-out:** part of the current task is left unfinished. Ticket the remainder so the main feature can ship in a working state from the user's point of view. This does **not** mean changing the main ticket's Jira status — never transition it; the user decides that. In the description, say what was already done, what's left, and reference the original ticket (if any) as a linked issue. If the current task is a Story, the remainder can be a Subtask under it; otherwise make it a sibling of the same type.
 
 ## Jira config
 
