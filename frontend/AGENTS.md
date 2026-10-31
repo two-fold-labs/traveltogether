@@ -16,6 +16,10 @@ Commands (from `frontend/`): `npm run dev` · `npm run lint` · `npm run build`
 8. **No** `any`, non-null `!`, `console.log`, plain CSS files, or inline `style` for static values.
 9. **Before finishing:** `npm run lint` and `npx tsc -b` must pass. Works in light and dark mode.
 
+## Deferred work → Jira
+
+When a story, task, bug, improvement or idea comes up that we won't do now, offer to log it in Jira (project `TT`) with the `jira-ticket` skill (`.claude/skills/jira-ticket/`). Never create a ticket without the user's confirmation.
+
 ## MCP servers
 
 Cursor reads **`.cursor/mcp.json`**. Root **`.mcp.json`** is the portable copy (same servers) for other MCP clients. Other files under `.cursor/` stay local (gitignored). Enable the servers in Cursor Settings → MCP. Do not put secrets in either file.
