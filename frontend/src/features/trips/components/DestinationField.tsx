@@ -7,9 +7,11 @@ import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 
 import { Icon } from '@/components/ui/Icon';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 
-import { usePlaceSearch } from '../hooks/usePlaceSearch';
+import { MIN_SEARCH_LENGTH, usePlaceSearch } from '../hooks/usePlaceSearch';
 import type { PlaceSuggestion } from '../types';
+import PlaceCaption from './PlaceCaption';
 
 interface DestinationFieldProps {
   id: string;
@@ -18,12 +20,6 @@ interface DestinationFieldProps {
   error?: string;
 }
 
-const filterLocations = (options: PlaceSuggestion[], query: string) => {
-  const q = query.trim().toLowerCase();
-
-  return options.filter(({ name }) => name.toLowerCase().includes(q));
-};
-
 const DestinationField = ({
   id,
   value,
@@ -31,25 +27,35 @@ const DestinationField = ({
   error,
 }: DestinationFieldProps) => {
   const [inputValue, setInputValue] = useState(value?.name ?? '');
+  const debouncedInputValue = useDebouncedValue(inputValue, 300);
+  const optionSelected = value?.name === debouncedInputValue;
 
   // Todo: Remove hardcode latitude and longitude
-  const { data } = usePlaceSearch(inputValue, '28.457523', '77.026344');
+  const { places, isFetching, isSearchEnabled } = usePlaceSearch(
+    optionSelected ? '' : debouncedInputValue,
+    '26.852208',
+    '80.862040',
+  );
 
   return (
     <Stack spacing={3}>
       <Autocomplete
         id={id}
-        options={data || []}
+        options={places}
         value={value}
         onChange={(_, next) => onChange(next)}
         inputValue={inputValue}
         onInputChange={(_, next) => setInputValue(next)}
         getOptionLabel={(option) => option.name}
         isOptionEqualToValue={(option, selected) => option.id === selected.id}
-        filterOptions={(options, { inputValue: query }) =>
-          filterLocations(options, query)
+        filterOptions={(options) => options}
+        loading={isFetching}
+        loadingText="Loading..."
+        noOptionsText={
+          isSearchEnabled
+            ? 'No matching locations'
+            : `Type at least ${MIN_SEARCH_LENGTH} characters`
         }
-        noOptionsText="No matching locations"
         forcePopupIcon={false}
         clearIcon={<Icon name="circleXmark" />}
         renderOption={({ key, ...props }, option) => (
@@ -71,13 +77,7 @@ const DestinationField = ({
                   <Typography variant="body2" className="truncate font-bold">
                     {option.name}
                   </Typography>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    className="block font-normal"
-                  >
-                    {option.distanceMeters} {/*• ~{option.drive} */}
-                  </Typography>
+                  <PlaceCaption place={option} />
                 </span>
               </Stack>
               {/* <Chip label={option.tag} size="small" /> */}
@@ -119,13 +119,7 @@ const DestinationField = ({
               <Typography variant="body2" className="truncate font-bold">
                 {value.name}
               </Typography>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                className="block font-normal"
-              >
-                {value.distanceMeters} {/*from Start • Est. {value.drive}*/}
-              </Typography>
+              <PlaceCaption place={value} />
             </span>
           </Stack>
           <Chip label="Selected" size="small" color="success" />
