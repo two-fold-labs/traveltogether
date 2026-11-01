@@ -26,3 +26,25 @@ export interface CreateTripValues {
   arriveBy: string;
   destination: PlaceSuggestion | null;
 }
+
+export interface CreateTripRequest {
+  name: string;
+  arriveBy: string;
+  destinationPlaceId: string;
+}
+
+export type TripStatus = 'created' | 'started' | 'ended';
+
+export interface CreateTripResponse {
+  tripId: string;
+  name: string;
+  arriveBy: string | null;
+  status: TripStatus;
+  createdAt: string;
+  destination: {
+    name: string;
+    address: string;
+    lat: number;
+    lng: number;
+  };
+}

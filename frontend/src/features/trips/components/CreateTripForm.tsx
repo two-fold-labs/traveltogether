@@ -1,3 +1,4 @@
+import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
@@ -17,6 +18,8 @@ import DestinationField from './DestinationField';
 
 interface CreateTripFormProps {
   onSubmit: (values: CreateTripValues) => void;
+  isSubmitting?: boolean;
+  submitError?: string;
 }
 
 type Errors = Partial<Record<keyof CreateTripValues, string>>;
@@ -55,7 +58,11 @@ const iconAdornment = (name: IconName) => ({
   ),
 });
 
-const CreateTripForm = ({ onSubmit }: CreateTripFormProps) => {
+const CreateTripForm = ({
+  onSubmit,
+  isSubmitting = false,
+  submitError,
+}: CreateTripFormProps) => {
   const [values, setValues] = useState(emptyValues);
   const [errors, setErrors] = useState<Errors>({});
   const [resetCount, setResetCount] = useState(0);
@@ -114,6 +121,7 @@ const CreateTripForm = ({ onSubmit }: CreateTripFormProps) => {
           variant="subtle"
           startIcon={<Icon name="rotateRight" />}
           onClick={reset}
+          disabled={isSubmitting}
           className="border border-border bg-card"
         >
           Reset
@@ -177,17 +185,19 @@ const CreateTripForm = ({ onSubmit }: CreateTripFormProps) => {
         </Stack>
       </div>
 
-      <div className="shrink-0 border-t border-border py-4">
+      <Stack spacing={2} className="shrink-0 border-t border-border py-4">
+        {submitError && <Alert severity="error">{submitError}</Alert>}
         <Button
           type="submit"
           variant="contained"
           startIcon={<Icon name="paperPlane" />}
+          disabled={isSubmitting}
           fullWidth
           className="h-12 rounded-2xl"
         >
-          Save & Create Trip
+          {isSubmitting ? 'Creating Trip...' : 'Save & Create Trip'}
         </Button>
-      </div>
+      </Stack>
     </form>
   );
 };
