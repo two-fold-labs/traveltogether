@@ -1,41 +1,22 @@
 import type { RequestHandler } from 'express';
 
+import { getUserId } from '#middlewares/auth.middleware.js';
+
+import { createTripSchema, getTripSchema } from './trip.schema.js';
 import * as tripService from './trip.service.js';
 
 const createTrip: RequestHandler = async (req, res, next) => {
   try {
-    const body: unknown = req.body;
-    const { name, destinationLocationId, arriveBy } = (body ?? {}) as Record<
-      string,
-      unknown
-    >;
-
-    // TODO: Refactor using zod
-    if (
-      typeof name !== 'string' ||
-      typeof destinationLocationId !== 'string' ||
-      (typeof arriveBy !== 'string' && typeof arriveBy !== 'number')
-    ) {
-      res.status(400).json({
-        error:
-          "Missing or invalid body. 'name' and 'destinationLocationId' must be strings, 'arriveBy' must be a date.",
-      });
-
-      return;
-    }
-
-    const arriveByDate = new Date(arriveBy);
-
-    if (isNaN(arriveByDate.getTime())) {
-      res.status(400).json({ error: "'arriveBy' must be a valid date." });
-
-      return;
-    }
+    const userId = getUserId(res);
+    const { name, destinationPlaceId, arriveBy } = createTripSchema.parse(
+      req.body,
+    );
 
     const response = await tripService.createTrip(
       name,
-      destinationLocationId,
-      arriveByDate,
+      destinationPlaceId,
+      arriveBy,
+      userId,
     );
 
     res.status(201).json(response);
@@ -44,4 +25,16 @@ const createTrip: RequestHandler = async (req, res, next) => {
   }
 };
 
-export { createTrip };
+const getTrip: RequestHandler = async (req, res, next) => {
+  try {
+    const { tripId } = getTripSchema.parse(req.params);
+
+    const response = await tripService.getTrip(tripId);
+
+    res.status(200).json(response);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { createTrip, getTrip };
