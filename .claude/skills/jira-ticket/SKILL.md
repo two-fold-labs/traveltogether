@@ -70,6 +70,24 @@ Don't encode priority, status, feature area (use Epics), or issue type in labels
 
 Propose a priority with a one-line reason; the user decides.
 
+## Ticket size: one ticket, one shippable step
+
+Keep each ticket small enough to finish, merge, and move on from: one PR, roughly a day of work or less, leaving the app working. Prefer several small linked tickets over one large one.
+
+**Split when** any of these is true:
+- The summary needs "and" to describe it.
+- One part can ship and be useful while another still has open questions or needs a decision.
+- One part depends on another being built first.
+- It has more than ~5 acceptance criteria.
+
+**How to split:**
+- Split into slices that each work end to end, not into layers (not "frontend ticket" + "backend ticket" when neither works alone). Each ticket must be done and testable on its own.
+- Order them: the foundation first, then what builds on it. Link each dependent ticket as **blocked by** the one it needs.
+- Don't split below a `quick-win`. A piece under an hour stays inside its neighbour.
+- 3+ related tickets for one feature area: offer an Epic (don't create one unasked).
+
+Example: "app-wide snackbar + global TanStack error handling" became TT-4 (snackbar + "Trip created") and TT-5 (global `onError`), with TT-5 blocked by TT-4.
+
 ## Workflow
 
 ### 1. Gather context — before drafting
@@ -83,6 +101,8 @@ Collect, don't invent:
 If anything a section needs is unknown (repro steps, expected behaviour, acceptance criteria), **ask the user** — one short batch of questions. Never fill gaps with guesses.
 
 ### 2. Draft
+
+**Size check first:** apply [Ticket size](#ticket-size-one-ticket-one-shippable-step). If it should be split, propose the split (titles + one line each + order) before drafting the full descriptions.
 
 **Summary (title):** imperative, specific, ≤ 80 chars, prefixed with area.
 - Good: `[Frontend] Debounce destination autocomplete requests`
@@ -101,6 +121,8 @@ When several items were deferred in one session, draft them all together and con
 Call `createJiraIssue` with `cloudId`, `projectKey: "TT"`, `issueType`, `summary`, `description`, `labels`, `priority`, and `parent` (for Subtasks / Stories under an Epic).
 
 If the create is rejected because the `priority` field isn't on the screen (team-managed projects can have it disabled), retry once without priority, then tell the user to enable the Priority field in TT's project settings.
+
+For split tickets, create them in dependency order, then link each pair with the `createJiraIssueLink` operation (via `discover` → `executeWrite`): `linkType: "Blocks"`, `inwardIssue` = the ticket that must be done first, `outwardIssue` = the blocked one. Also name the blocker in the blocked ticket's description.
 
 ### 5. Report
 
