@@ -86,7 +86,12 @@ Keep each ticket small enough to finish, merge, and move on from: one PR, roughl
 - Don't split below a `quick-win`. A piece under an hour stays inside its neighbour.
 - 3+ related tickets for one feature area: offer an Epic (don't create one unasked).
 
-Example: "app-wide snackbar + global TanStack error handling" became TT-4 (snackbar + "Trip created") and TT-5 (global `onError`), with TT-5 blocked by TT-4.
+**Subtasks under a Story:** for every Story, suggest whether it can be divided into Subtasks, each pickable on its own, that together complete the Story. Unlike Stories, a Subtask doesn't have to ship anything by itself, but it must be **workable independently**: no Subtask waits on another to start. To make that possible:
+- Put the shared contract in the Story (API request/response shape, component props, route), so each side builds against it. The frontend can use mock data until the endpoint lands.
+- Split along natural seams (backend endpoint / frontend UI / a reusable component), not into steps of one sequence.
+- If a Story is too small to split meaningfully (each piece under a `quick-win`), say so and keep it whole.
+
+Example: TT-6 (home preview, Subtasks TT-7 backend + TT-8 frontend sharing an API contract) blocks TT-9 (My Trips page).
 
 ## Workflow
 
@@ -108,7 +113,7 @@ If anything a section needs is unknown (repro steps, expected behaviour, accepta
 - Good: `[Frontend] Debounce destination autocomplete requests`
 - Bad: `Fix autocomplete`
 
-**Description:** markdown, using the template for the type below. Drop a section only if it truly doesn't apply. File references use repo-relative paths with lines, e.g. `frontend/src/features/trips/api.ts:42`.
+**Description:** markdown, using the matching template in [templates.md](templates.md) (read only that section). Drop a section only if it truly doesn't apply. File references use repo-relative paths with lines, e.g. `frontend/src/features/trips/api.ts:42`.
 
 ### 3. Confirm
 
@@ -118,153 +123,12 @@ When several items were deferred in one session, draft them all together and con
 
 ### 4. Create
 
-Call `createJiraIssue` with `cloudId`, `projectKey: "TT"`, `issueType`, `summary`, `description`, `labels`, `priority`, and `parent` (for Subtasks / Stories under an Epic).
-
-If the create is rejected because the `priority` field isn't on the screen (team-managed projects can have it disabled), retry once without priority, then tell the user to enable the Priority field in TT's project settings.
-
-For split tickets, create them in dependency order, then link each pair with the `createJiraIssueLink` operation (via `discover` → `executeWrite`): `linkType: "Blocks"`, `inwardIssue` = the ticket that must be done first, `outwardIssue` = the blocked one. Also name the blocker in the blocked ticket's description.
+- Call `createJiraIssue` with `cloudId`, `projectKey: "TT"`, `issueType`, `summary`, `description`, `labels`, `priority`, and `parent` (for Subtasks / Stories under an Epic).
+- If rejected because `priority` isn't on the screen, retry once without it, then tell the user to enable the Priority field in TT's project settings.
+- Split tickets: create in dependency order (parent Story before its Subtasks), then link with `createJiraIssueLink` (via `discover` → `executeWrite`): `linkType: "Blocks"`, `inwardIssue` = blocker, `outwardIssue` = blocked. Also name the blocker in the blocked ticket's description.
 
 ### 5. Report
 
 If the ticket points at a specific code location, add a `// TODO(TT-<n>): <short summary>` comment there (using the file's comment syntax), so the code links back to the ticket.
 
 Reply with the key and link (`https://two-fold-labs.atlassian.net/browse/TT-<n>`), plus where the TODO comment was added.
-
-## Description templates
-
-### Story
-```
-## User story
-As a <user>, I want <goal> so that <benefit>.
-
-## Context
-<What prompted this; where the app is today.>
-
-## Scope
-**In:** ...
-**Out:** ...
-
-## Acceptance criteria
-- [ ] ...
-- [ ] ...
-
-## Technical notes
-<Approach ideas, APIs/components involved, open questions.>
-
-## References
-- Branch / commit: `<branch>` @ `<sha>`
-- Files: ...
-```
-
-### Subtask
-```
-## What
-<The specific piece of the parent story.>
-
-## Done when
-- [ ] ...
-
-## Files
-- ...
-```
-
-### Task (standalone)
-```
-## What
-<The work to do, in a few sentences.>
-
-## Why
-<What it unblocks or why it's needed.>
-
-## Context
-<Where things stand today; what prompted this.>
-
-## Done when
-- [ ] ...
-
-## References
-- Branch / commit: `<branch>` @ `<sha>`
-- Files: ...
-
-## Why deferred
-...
-```
-
-### Issue (bug)
-```
-## Summary
-<One or two sentences: what's broken.>
-
-## Steps to reproduce
-1. ...
-
-## Expected
-...
-
-## Actual
-...  (include error message / console output if any)
-
-## Suspected cause
-<file:line and reasoning, if known — say "unknown" otherwise.>
-
-## Impact
-<Who/what is affected, how often, any workaround.>
-
-## Environment
-- Branch / commit: `<branch>` @ `<sha>`
-- Where: frontend / backend / both
-
-## Why deferred
-<Why this wasn't fixed when found.>
-```
-
-### Improvement / refactor
-```
-## Current state
-<How it works now, with file:line.>
-
-## Problem
-<Why that's a problem: maintainability, perf, correctness risk, DX.>
-
-## Proposed change
-<What to do instead. Alternatives if any.>
-
-## Benefits
-...
-
-## Risks / effort
-<What could break; rough size S / M / L.>
-
-## Done when
-- [ ] ...
-
-## Why deferred
-...
-```
-
-### Idea
-```
-## Idea
-<The idea in a few sentences.>
-
-## Why it might be worth it
-...
-
-## Open questions
-- ...
-
-## Possible first step
-<Smallest thing that would validate it.>
-```
-
-### Epic
-```
-## Goal
-<The feature area and the outcome it delivers.>
-
-## Stories (planned)
-- ...
-
-## Out of scope
-...
-```
