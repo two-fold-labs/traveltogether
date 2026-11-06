@@ -2,13 +2,12 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import { Link } from 'react-router';
 
+import DarkModeButton from '@/components/ui/DarkModeButton';
 import Logo from '@/components/ui/Logo';
-import CreateTripButton from '@/features/trips/CreateTripButton';
-import JoinTripButton from '@/features/trips/JoinTripButton';
+import { JoinTripButton, CreateTripButton } from '@/features/trips';
 import { ROUTES } from '@/lib/routes';
 
 import LocationShareButton from './LocationShareButton';
-import DarkModeButton from '../../ui/DarkModeButton';
 
 const Header = () => (
   <AppBar component="header">
