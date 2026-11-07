@@ -4,37 +4,42 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { type FormEvent, useState } from 'react';
+import { type SubmitEvent, useState } from 'react';
 import { Link } from 'react-router';
 
 import FormField from '@/components/ui/FormField';
 import { Icon, type IconName } from '@/components/ui/Icon';
 import PresetChips from '@/components/ui/PresetChips';
+import { getFieldErrors } from '@/lib/apiError';
 import { ROUTES } from '@/lib/routes';
 
 import { getArrivalPresets } from '../arrivalPresets';
-import { type CreateTripValues } from '../types';
+import { TRIP_NAME_MAX_LENGTH, TRIP_NAME_MIN_LENGTH } from '../constants';
+import { type CreateTripErrors, type CreateTripValues } from '../types';
 import DestinationField from './DestinationField';
 
 interface CreateTripFormProps {
   onSubmit: (values: CreateTripValues) => void;
   isSubmitting?: boolean;
-  submitError?: string;
+  submitError: Error | null;
 }
 
-type Errors = Partial<Record<keyof CreateTripValues, string>>;
-
 const emptyValues: CreateTripValues = {
-  tripName: '',
+  name: '',
   arriveBy: '',
   destination: null,
 };
 
-const validate = ({ tripName, arriveBy, destination }: CreateTripValues) => {
-  const errors: Errors = {};
+const validate = ({ name, arriveBy, destination }: CreateTripValues) => {
+  const errors: CreateTripErrors = {};
+  const nameLength = name.trim().length;
 
-  if (!tripName.trim()) {
-    errors.tripName = 'Enter a trip name';
+  if (nameLength === 0) {
+    errors.name = 'Enter a trip name';
+  } else if (nameLength < TRIP_NAME_MIN_LENGTH) {
+    errors.name = `Name must be at least ${TRIP_NAME_MIN_LENGTH} characters`;
+  } else if (nameLength > TRIP_NAME_MAX_LENGTH) {
+    errors.name = `Name must be at most ${TRIP_NAME_MAX_LENGTH} characters`;
   }
 
   if (!arriveBy) {
@@ -48,6 +53,17 @@ const validate = ({ tripName, arriveBy, destination }: CreateTripValues) => {
   }
 
   return errors;
+};
+
+// The form holds the selected place; the API validates its id
+const toServerErrors = (error: Error | null): CreateTripErrors => {
+  const server = getFieldErrors(error);
+
+  return {
+    name: server.name,
+    arriveBy: server.arriveBy,
+    destination: server.destinationPlaceId,
+  };
 };
 
 const iconAdornment = (name: IconName) => ({
@@ -64,8 +80,20 @@ const CreateTripForm = ({
   submitError,
 }: CreateTripFormProps) => {
   const [values, setValues] = useState(emptyValues);
-  const [errors, setErrors] = useState<Errors>({});
+  const [errors, setErrors] = useState<CreateTripErrors>({});
   const [resetCount, setResetCount] = useState(0);
+  const [prevSubmitError, setPrevSubmitError] = useState(submitError);
+  const serverErrors = toServerErrors(submitError);
+
+  // Copy server field errors into state when a new error arrives, so editing
+  // a field clears its message the same way it clears a client error
+  if (submitError !== prevSubmitError) {
+    setPrevSubmitError(submitError);
+    setErrors(serverErrors);
+  }
+
+  const showSubmitAlert =
+    submitError !== null && !Object.values(serverErrors).some(Boolean);
 
   const setField = <K extends keyof CreateTripValues>(
     field: K,
@@ -81,7 +109,7 @@ const CreateTripForm = ({
     setResetCount((n) => n + 1);
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = (e: SubmitEvent) => {
     e.preventDefault();
     const nextErrors = validate(values);
 
@@ -135,11 +163,14 @@ const CreateTripForm = ({
               <TextField
                 id="trip-name"
                 placeholder="e.g., Summer Coast Road Trip"
-                value={values.tripName}
-                onChange={(e) => setField('tripName', e.target.value)}
-                error={!!errors.tripName}
-                helperText={errors.tripName}
-                slotProps={{ input: iconAdornment('penNib') }}
+                value={values.name}
+                onChange={(e) => setField('name', e.target.value)}
+                error={!!errors.name}
+                helperText={errors.name}
+                slotProps={{
+                  input: iconAdornment('penNib'),
+                  htmlInput: { maxLength: TRIP_NAME_MAX_LENGTH },
+                }}
                 fullWidth
               />
             </FormField>
@@ -186,7 +217,9 @@ const CreateTripForm = ({
       </div>
 
       <Stack spacing={2} className="shrink-0 border-t border-border py-4">
-        {submitError && <Alert severity="error">{submitError}</Alert>}
+        {showSubmitAlert && (
+          <Alert severity="error">{submitError.message}</Alert>
+        )}
         <Button
           type="submit"
           variant="contained"

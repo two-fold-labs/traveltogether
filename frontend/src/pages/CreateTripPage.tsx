@@ -12,7 +12,7 @@ const CreateTripPage = () => {
   const navigate = useNavigate();
 
   const handleSubmit = (values: CreateTripValues) => {
-    const { tripName, arriveBy, destination } = values;
+    const { name, arriveBy, destination } = values;
 
     if (!destination) {
       return;
@@ -20,7 +20,7 @@ const CreateTripPage = () => {
 
     mutation.mutate(
       {
-        name: tripName,
+        name,
         arriveBy: new Date(arriveBy).toISOString(),
         destinationPlaceId: destination.id,
       },
@@ -37,7 +37,7 @@ const CreateTripPage = () => {
       <CreateTripForm
         onSubmit={handleSubmit}
         isSubmitting={mutation.isPending}
-        submitError={mutation.error?.message}
+        submitError={mutation.error}
       />
     </main>
   );

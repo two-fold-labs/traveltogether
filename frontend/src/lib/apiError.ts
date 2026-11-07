@@ -71,5 +71,16 @@ const toApiError = (
   });
 };
 
-export { ApiError, toApiError };
+// Validation details keyed by backend field name; {} for any other error
+const getFieldErrors = (error: unknown): Record<string, string | undefined> => {
+  if (!(error instanceof ApiError) || !error.details) {
+    return {};
+  }
+
+  return Object.fromEntries(
+    error.details.map(({ field, message }) => [field, message]),
+  );
+};
+
+export { ApiError, getFieldErrors, toApiError };
 export type { ApiErrorDetail };

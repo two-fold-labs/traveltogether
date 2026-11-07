@@ -22,10 +22,12 @@ export interface LocationOption {
 }
 
 export interface CreateTripValues {
-  tripName: string;
+  name: string;
   arriveBy: string;
   destination: PlaceSuggestion | null;
 }
+
+export type CreateTripErrors = Partial<Record<keyof CreateTripValues, string>>;
 
 export interface CreateTripRequest {
   name: string;

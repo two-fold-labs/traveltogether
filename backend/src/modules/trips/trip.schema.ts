@@ -6,7 +6,7 @@ const createTripSchema = z
       .string()
       .trim()
       .min(2, 'Name must be at least 2 characters')
-      .max(100),
+      .max(100, 'Name must be at most 100 characters'),
     destinationPlaceId: z.string().trim().min(1),
     arriveBy: z.coerce.date(),
   })
