@@ -20,6 +20,15 @@ Commands (from `backend/`): `npm run dev` · `npm run typecheck` · `npm run lin
 
 **Before finishing:** run `npm run lint:fix`, then `npm run typecheck` and `npm run lint`. `eslint.config.js` and `tsconfig.json` are the source of truth for style and strictness. Fix violations; don't work around them with `any`, `!` or lint-disable comments.
 
+## Deferred work → Jira
+
+Offer to log a Jira ticket (project `TT`) with the `jira-ticket` skill (`.claude/skills/jira-ticket/`) when:
+
+- a story, task, bug, improvement or idea comes up that we won't do now, or
+- part of the current task is left unfinished: split the leftover into its own ticket so the main feature can ship in a working state for the user.
+
+Never create a ticket without the user's confirmation.
+
 ## Read the matching doc before starting
 
 | When you are…                                                       | Read                                                 |

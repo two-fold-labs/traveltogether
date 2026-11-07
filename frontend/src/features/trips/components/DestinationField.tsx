@@ -7,25 +7,18 @@ import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 
 import { Icon } from '@/components/ui/Icon';
+import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 
-import { mockLocations } from '../mockLocations';
-import { type LocationOption } from '../types';
+import { MIN_SEARCH_LENGTH, usePlaceSearch } from '../hooks/usePlaceSearch';
+import type { PlaceSuggestion } from '../types';
+import PlaceCaption from './PlaceCaption';
 
 interface DestinationFieldProps {
   id: string;
-  value: LocationOption | null;
-  onChange: (value: LocationOption | null) => void;
+  value: PlaceSuggestion | null;
+  onChange: (value: PlaceSuggestion | null) => void;
   error?: string;
 }
-
-const filterLocations = (options: LocationOption[], query: string) => {
-  const q = query.trim().toLowerCase();
-
-  return options.filter(
-    ({ name, category }) =>
-      name.toLowerCase().includes(q) || category.toLowerCase().includes(q),
-  );
-};
 
 const DestinationField = ({
   id,
@@ -34,22 +27,35 @@ const DestinationField = ({
   error,
 }: DestinationFieldProps) => {
   const [inputValue, setInputValue] = useState(value?.name ?? '');
+  const debouncedInputValue = useDebouncedValue(inputValue, 300);
+  const optionSelected = value?.name === debouncedInputValue;
+
+  // Todo: Remove hardcode latitude and longitude
+  const { places, isFetching, isSearchEnabled } = usePlaceSearch(
+    optionSelected ? '' : debouncedInputValue,
+    '26.852208',
+    '80.862040',
+  );
 
   return (
     <Stack spacing={3}>
       <Autocomplete
         id={id}
-        options={mockLocations}
+        options={places}
         value={value}
         onChange={(_, next) => onChange(next)}
         inputValue={inputValue}
         onInputChange={(_, next) => setInputValue(next)}
         getOptionLabel={(option) => option.name}
         isOptionEqualToValue={(option, selected) => option.id === selected.id}
-        filterOptions={(options, { inputValue: query }) =>
-          filterLocations(options, query)
+        filterOptions={(options) => options}
+        loading={isFetching}
+        loadingText="Loading..."
+        noOptionsText={
+          isSearchEnabled
+            ? 'No matching locations'
+            : `Type at least ${MIN_SEARCH_LENGTH} characters`
         }
-        noOptionsText="No matching locations"
         forcePopupIcon={false}
         clearIcon={<Icon name="circleXmark" />}
         renderOption={({ key, ...props }, option) => (
@@ -65,22 +71,16 @@ const DestinationField = ({
                 className="min-w-0 items-center"
               >
                 <span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-xs text-brand-600">
-                  <Icon name={option.icon} />
+                  <Icon name="house" /> {/* Todo: Hardcoded icon */}
                 </span>
                 <span className="min-w-0">
                   <Typography variant="body2" className="truncate font-bold">
                     {option.name}
                   </Typography>
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    className="block font-normal"
-                  >
-                    {option.dist} • ~{option.drive}
-                  </Typography>
+                  <PlaceCaption place={option} />
                 </span>
               </Stack>
-              <Chip label={option.tag} size="small" />
+              {/* <Chip label={option.tag} size="small" /> */}
             </Stack>
           </li>
         )}
@@ -119,13 +119,7 @@ const DestinationField = ({
               <Typography variant="body2" className="truncate font-bold">
                 {value.name}
               </Typography>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                className="block font-normal"
-              >
-                {value.dist} from Start • Est. {value.drive}
-              </Typography>
+              <PlaceCaption place={value} />
             </span>
           </Stack>
           <Chip label="Selected" size="small" color="success" />
