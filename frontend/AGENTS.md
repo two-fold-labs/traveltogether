@@ -19,6 +19,7 @@ Commands (from `frontend/`): `npm run dev` · `npm run lint` · `npm run build`
 ## Deferred work → Jira
 
 Offer to log a Jira ticket (project `TT`) with the `jira-ticket` skill (`.claude/skills/jira-ticket/`) when:
+
 - a story, task, bug, improvement or idea comes up that we won't do now, or
 - part of the current task is left unfinished: split the leftover into its own ticket so the main feature can ship in a working state for the user.
 
