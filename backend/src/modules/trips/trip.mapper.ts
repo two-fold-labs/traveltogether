@@ -1,6 +1,28 @@
-import type { LocationRow, PublicTrip, TripRow } from './trip.types.js';
+import type {
+  LocationRow,
+  PublicParticipant,
+  PublicTrip,
+  TripParticipantsRow,
+  TripRow,
+} from './trip.types.js';
 
-export function mapTrip(trip: TripRow, location: LocationRow): PublicTrip {
+export function mapTrip(
+  trip: TripRow,
+  location: LocationRow,
+  participants: TripParticipantsRow[],
+): PublicTrip {
+  const participantsDetails: PublicParticipant[] = participants.map(
+    (participant) => {
+      return {
+        id: participant.id,
+        tripId: trip.trip_id,
+        userId: participant.user_id,
+        isOwner: participant.is_owner,
+        joinedAt: participant.joined_at,
+      };
+    },
+  );
+
   return {
     tripId: trip.trip_id,
     name: trip.name,
@@ -13,5 +35,6 @@ export function mapTrip(trip: TripRow, location: LocationRow): PublicTrip {
       lat: Number(location.latitude),
       lng: Number(location.longitude),
     },
+    participants: participantsDetails,
   };
 }

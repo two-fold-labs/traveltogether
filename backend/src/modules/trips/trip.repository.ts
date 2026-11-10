@@ -4,6 +4,7 @@ import type {
   TripRow,
   LocationRow,
   TripWithDestinationRow,
+  TripParticipantsRow,
 } from './trip.types.js';
 
 interface InsertLocationInput {
@@ -19,6 +20,13 @@ interface InsertTripInput {
   arriveBy: Date;
   createdBy: string;
   destinationLocationId: string;
+}
+
+interface InsertTripParticipantInput {
+  tripId: string;
+  userId: string;
+  isOwner: boolean;
+  sourceLocationId: string;
 }
 
 const insertLocation = async ({
@@ -56,16 +64,39 @@ const insertTrip = async ({
 
   const result = await db.query<TripRow>(
     `INSERT INTO trips (
-         trip_id, name, arrive_by,
-         destination_location_id, created_by)
-       VALUES ($1, $2, $3, $4, $5)
-       ON CONFLICT (trip_id) DO NOTHING
-       RETURNING *`,
+        trip_id, name, arrive_by,
+        destination_location_id, created_by)
+      VALUES ($1, $2, $3, $4, $5)
+      ON CONFLICT (trip_id) DO NOTHING
+      RETURNING id, trip_id, name, arrive_by, status, created_at, started_at, ended_at, destination_location_id, created_by`,
     [tripId, name, arriveBy, destinationLocationId, createdBy],
   );
 
   // undefined means trip_id already exists; the caller retries with a new ID.
   return result.rows[0];
+};
+
+const insertTripParticipant = async ({
+  tripId,
+  userId,
+  isOwner,
+  sourceLocationId,
+}: InsertTripParticipantInput) => {
+  const db = getDb();
+  const text = `INSERT INTO trip_participants (
+                  trip_id, user_id, is_owner, source_location_id)
+                VALUES ($1, $2, $3, $4)
+                RETURNING id, trip_id, user_id, is_owner, joined_at, source_location_id`;
+  const values = [tripId, userId, isOwner, sourceLocationId];
+
+  const result = await db.query<TripParticipantsRow>(text, values);
+  const tripParticipant = result.rows[0];
+
+  if (!tripParticipant) {
+    throw new Error('Failed to insert trip participant');
+  }
+
+  return tripParticipant;
 };
 
 const findTripWithDestinationByTripId = async (tripId: string) => {
@@ -116,4 +147,9 @@ const findTripWithDestinationByTripId = async (tripId: string) => {
   return { trip, location };
 };
 
-export { insertLocation, insertTrip, findTripWithDestinationByTripId };
+export {
+  insertLocation,
+  insertTrip,
+  insertTripParticipant,
+  findTripWithDestinationByTripId,
+};
