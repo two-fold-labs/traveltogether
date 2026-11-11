@@ -19,6 +19,7 @@ Read this when writing controller/service code, naming things, or using zod.
   `Body` / `Params` / `Query` name where the client sent it (`req.body`, `req.params`, `req.query`). `User` in `auth.types.ts` predates this and keeps its name until that file is touched; new types follow the table.
 
 - Repository functions are named for the SQL operation and the table, with the lookup key when it isn't obvious: `insertTrip`, `findUserById`, `findTripWithDestinationByTripId`. Use `insert` for writes, not `create`; `create` is for service operations.
+- Internal primary key is `<entity>RowId`, public identifier is `<entity>Id` (`tripRowId` = `trips.id`, `tripId` = `trips.trip_id`). Columns don't follow this: `trip_participants.trip_id` holds a `tripRowId`.
 - Constants: `UPPER_SNAKE_CASE`, flat and descriptive (`AUTH_COOKIE_NAME`), not a grab-bag object. Use an `as const` object only for a real set of alternatives.
 
 ## Controller shape

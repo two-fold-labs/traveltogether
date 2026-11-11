@@ -53,7 +53,7 @@ const createTrip = async (
       if (trip) {
         // Todo: We are passing destinationId as source_location_id. Later, we'll get the data from UI and pass it.
         const participant = await tripRepository.insertTripParticipant({
-          tripId: trip.id,
+          tripRowId: trip.id,
           userId,
           isOwner: true,
           sourceLocationId: location.id,
@@ -79,7 +79,7 @@ const getTrip = async (userId: string, tripId: string): Promise<PublicTrip> => {
     throw new NotFoundError('Trip not found.');
   }
 
-  const tripParticipants = await tripRepository.findTripParticipantsByTripId(
+  const tripParticipants = await tripRepository.findTripParticipantsByTripRowId(
     tripWithDestination.trip.id,
   );
   const isUserTripParticipant = tripParticipants.some(
@@ -105,24 +105,24 @@ const getTrips = async (userId: string): Promise<PublicTrip[]> => {
     return [];
   }
 
-  const participants = await tripRepository.findTripParticipantsByTripIds(
+  const participants = await tripRepository.findTripParticipantsByTripRowIds(
     tripsWithDestination.map(({ trip }) => trip.id),
   );
 
-  const participantsByTripId = new Map<string, TripParticipantsRow[]>();
+  const participantsByTripRowId = new Map<string, TripParticipantsRow[]>();
 
   for (const participant of participants) {
-    const tripParticipants = participantsByTripId.get(participant.trip_id);
+    const tripParticipants = participantsByTripRowId.get(participant.trip_id);
 
     if (tripParticipants) {
       tripParticipants.push(participant);
     } else {
-      participantsByTripId.set(participant.trip_id, [participant]);
+      participantsByTripRowId.set(participant.trip_id, [participant]);
     }
   }
 
   return tripsWithDestination.map(({ trip, location }) =>
-    mapTrip(trip, location, participantsByTripId.get(trip.id) ?? []),
+    mapTrip(trip, location, participantsByTripRowId.get(trip.id) ?? []),
   );
 };
 

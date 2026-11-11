@@ -24,7 +24,7 @@ interface InsertTripInput {
 }
 
 interface InsertTripParticipantInput {
-  tripId: string;
+  tripRowId: string;
   userId: string;
   isOwner: boolean;
   sourceLocationId: string;
@@ -78,7 +78,7 @@ const insertTrip = async ({
 };
 
 const insertTripParticipant = async ({
-  tripId,
+  tripRowId,
   userId,
   isOwner,
   sourceLocationId,
@@ -88,7 +88,7 @@ const insertTripParticipant = async ({
                   trip_id, user_id, is_owner, source_location_id)
                 VALUES ($1, $2, $3, $4)
                 RETURNING id, trip_id, user_id, is_owner, joined_at, source_location_id`;
-  const values = [tripId, userId, isOwner, sourceLocationId];
+  const values = [tripRowId, userId, isOwner, sourceLocationId];
 
   const result = await db.query<TripParticipantsRow>(text, values);
   const tripParticipant = result.rows[0];
@@ -148,27 +148,27 @@ const findTripWithDestinationByTripId = async (tripId: string) => {
   return { trip, location };
 };
 
-const findTripParticipantsByTripId = async (tripId: string) => {
+const findTripParticipantsByTripRowId = async (tripRowId: string) => {
   const db = getDb();
   const text = `SELECT
                   id, trip_id, user_id, is_owner, joined_at, source_location_id
                   FROM trip_participants
                   WHERE trip_id = $1
                   ORDER BY joined_at, id ASC`;
-  const values = [tripId];
+  const values = [tripRowId];
   const result = await db.query<TripParticipantsRow>(text, values);
 
   return result.rows;
 };
 
-const findTripParticipantsByTripIds = async (tripIds: string[]) => {
+const findTripParticipantsByTripRowIds = async (tripRowIds: string[]) => {
   const db = getDb();
   const text = `SELECT
                   id, trip_id, user_id, is_owner, joined_at, source_location_id
                   FROM trip_participants
                   WHERE trip_id = ANY($1)
                   ORDER BY joined_at, id ASC`;
-  const values = [tripIds];
+  const values = [tripRowIds];
   const result = await db.query<TripParticipantsRow>(text, values);
 
   return result.rows;
@@ -225,7 +225,7 @@ export {
   insertTrip,
   insertTripParticipant,
   findTripWithDestinationByTripId,
-  findTripParticipantsByTripId,
-  findTripParticipantsByTripIds,
+  findTripParticipantsByTripRowId,
+  findTripParticipantsByTripRowIds,
   findTripsWithDestinationByUserId,
 };
