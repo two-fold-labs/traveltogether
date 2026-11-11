@@ -16,18 +16,8 @@ interface TripCardProps {
 const BADGE_CLASS =
   'inline-flex items-center gap-1 rounded-full border px-2 py-0.5';
 
-const getStatusLabel = (trip: TripCardData): string => {
-  if (trip.status === 'started') {
-    return 'Live now';
-  }
-
-  const timeUntil = formatRelativeTime(trip.arriveBy);
-
-  return timeUntil ? `Upcoming • ${timeUntil}` : 'Upcoming';
-};
-
 const TripCard = ({ trip, onView, onEdit }: TripCardProps) => {
-  const isLive = trip.status === 'started';
+  const timeUntil = formatRelativeTime(trip.arriveBy);
 
   return (
     <Stack
@@ -40,13 +30,9 @@ const TripCard = ({ trip, onView, onEdit }: TripCardProps) => {
           <Typography
             variant="badge"
             component="span"
-            className={
-              isLive
-                ? `${BADGE_CLASS} border-transparent bg-success/15 text-success`
-                : `${BADGE_CLASS} border-transparent bg-primary/15 text-primary`
-            }
+            className={`${BADGE_CLASS} border-transparent bg-primary/15 text-primary`}
           >
-            {getStatusLabel(trip)}
+            {timeUntil ? `Upcoming • ${timeUntil}` : 'Upcoming'}
           </Typography>
           <Typography
             variant="badge"
