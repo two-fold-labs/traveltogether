@@ -2,14 +2,14 @@ import type {
   LocationRow,
   PublicParticipant,
   PublicTrip,
-  TripParticipantsRow,
+  TripParticipantRow,
   TripRow,
 } from './trip.types.js';
 
 export function mapTrip(
   trip: TripRow,
   location: LocationRow,
-  participants: TripParticipantsRow[],
+  participants: TripParticipantRow[],
 ): PublicTrip {
   const participantsDetails: PublicParticipant[] = participants.map(
     (participant) => {

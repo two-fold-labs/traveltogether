@@ -5,7 +5,7 @@ import type {
   TripRow,
   LocationRow,
   TripWithDestinationRow,
-  TripParticipantsRow,
+  TripParticipantRow,
 } from './trip.types.js';
 
 interface InsertLocationInput {
@@ -90,7 +90,7 @@ const insertTripParticipant = async ({
                 RETURNING id, trip_id, user_id, is_owner, joined_at, source_location_id`;
   const values = [tripRowId, userId, isOwner, sourceLocationId];
 
-  const result = await db.query<TripParticipantsRow>(text, values);
+  const result = await db.query<TripParticipantRow>(text, values);
   const tripParticipant = result.rows[0];
 
   if (!tripParticipant) {
@@ -156,7 +156,7 @@ const findTripParticipantsByTripRowId = async (tripRowId: string) => {
                   WHERE trip_id = $1
                   ORDER BY joined_at, id ASC`;
   const values = [tripRowId];
-  const result = await db.query<TripParticipantsRow>(text, values);
+  const result = await db.query<TripParticipantRow>(text, values);
 
   return result.rows;
 };
@@ -169,7 +169,7 @@ const findTripParticipantsByTripRowIds = async (tripRowIds: string[]) => {
                   WHERE trip_id = ANY($1)
                   ORDER BY joined_at, id ASC`;
   const values = [tripRowIds];
-  const result = await db.query<TripParticipantsRow>(text, values);
+  const result = await db.query<TripParticipantRow>(text, values);
 
   return result.rows;
 };

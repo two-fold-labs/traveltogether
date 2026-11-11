@@ -29,7 +29,7 @@ export type TripWithDestinationRow = TripRow & {
   location_longitude: string;
 };
 
-export type TripParticipantsRow = {
+export type TripParticipantRow = {
   id: string;
   trip_id: string;
   user_id: string;

@@ -12,7 +12,7 @@ import {
 } from './trip.constants.js';
 import { mapTrip } from './trip.mapper.js';
 import * as tripRepository from './trip.repository.js';
-import type { PublicTrip, TripParticipantsRow } from './trip.types.js';
+import type { PublicTrip, TripParticipantRow } from './trip.types.js';
 
 const createTrip = async (
   name: string,
@@ -32,7 +32,7 @@ const createTrip = async (
     ]);
   }
 
-  const tripWithDetails = await withTransaction(async () => {
+  const createdTrip = await withTransaction(async () => {
     const location = await tripRepository.insertLocation({
       name: placeDetails.name,
       address: placeDetails.address,
@@ -66,8 +66,8 @@ const createTrip = async (
     throw new Error('Failed to generate a unique trip ID.');
   });
 
-  return mapTrip(tripWithDetails.trip, tripWithDetails.location, [
-    tripWithDetails.participant,
+  return mapTrip(createdTrip.trip, createdTrip.location, [
+    createdTrip.participant,
   ]);
 };
 
@@ -109,7 +109,7 @@ const getTrips = async (userId: string): Promise<PublicTrip[]> => {
     tripsWithDestination.map(({ trip }) => trip.id),
   );
 
-  const participantsByTripRowId = new Map<string, TripParticipantsRow[]>();
+  const participantsByTripRowId = new Map<string, TripParticipantRow[]>();
 
   for (const participant of participants) {
     const tripParticipants = participantsByTripRowId.get(participant.trip_id);
