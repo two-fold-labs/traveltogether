@@ -4,7 +4,9 @@ Read this when writing SQL, a repository, a migration, or a row type.
 
 ## Setup
 
-- PostgreSQL via `pg` `Pool` (`src/config/db.ts`), imported as `import db from '#config/db.js'`.
+- PostgreSQL via `pg` `Pool` (`src/config/db.ts`). Repositories get a client with `const db = getDb();` (`import { getDb } from '#config/db.js'`) **inside each query function**, never at module level: `getDb()` returns the current transaction's client inside `withTransaction`, and the pool otherwise.
+- Never import the default `pool` in a repository. Queries on it run outside any open transaction and are not rolled back with it.
+- When several writes must succeed or fail together, the service wraps them in `withTransaction(async () => { … })`. Repositories never open transactions.
 - Development requires a **local** Postgres; production a remote one (enforced in `src/config/env.ts`).
 - Migrations: `node-pg-migrate`, plain SQL files in `migrations/`, numbered (`4_add-x.sql`), each with an up section and a `-- Down Migration` section.
 - Applied migrations are append-only. Never edit one that has been run elsewhere; add a new one.

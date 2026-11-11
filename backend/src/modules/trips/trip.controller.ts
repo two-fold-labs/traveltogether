@@ -27,9 +27,10 @@ const createTrip: RequestHandler = async (req, res, next) => {
 
 const getTrip: RequestHandler = async (req, res, next) => {
   try {
+    const userId = getUserId(res);
     const { tripId } = getTripSchema.parse(req.params);
 
-    const response = await tripService.getTrip(tripId);
+    const response = await tripService.getTrip(userId, tripId);
 
     res.status(200).json(response);
   } catch (error) {

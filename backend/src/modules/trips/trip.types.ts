@@ -21,24 +21,44 @@ export type LocationRow = {
   longitude: string;
 };
 
-export type PublicTrip = {
-  tripId: string;
-  name: string;
-  arriveBy: Date | null;
-  status: TripStatus;
-  createdAt: Date;
-  destination: {
-    name: string;
-    address: string;
-    lat: number;
-    lng: number;
-  };
-};
-
 export type TripWithDestinationRow = TripRow & {
   location_id: string;
   location_name: string;
   location_address: string | null;
   location_latitude: string;
   location_longitude: string;
+};
+
+export type TripParticipantsRow = {
+  id: string;
+  trip_id: string;
+  user_id: string;
+  is_owner: boolean;
+  joined_at: Date;
+  source_location_id: string;
+};
+
+export type PublicParticipant = {
+  id: string;
+  tripId: string;
+  userId: string;
+  isOwner: boolean;
+  joinedAt: Date;
+};
+
+export type PublicLocation = {
+  name: string;
+  address: string;
+  lat: number;
+  lng: number;
+};
+
+export type PublicTrip = {
+  tripId: string;
+  name: string;
+  arriveBy: Date | null;
+  status: TripStatus;
+  createdAt: Date;
+  destination: PublicLocation;
+  participants: PublicParticipant[];
 };

@@ -37,16 +37,28 @@ export interface CreateTripRequest {
 
 export type TripStatus = 'created' | 'started' | 'ended';
 
+interface TripParticipant {
+  id: string;
+  tripId: string;
+  userId: string;
+  isOwner: boolean;
+  joinedAt: string;
+}
+
+// The name can be TripLocation based on future usecase.
+interface TripDestination {
+  name: string;
+  address: string;
+  lat: number;
+  lng: number;
+}
+
 export interface CreateTripResponse {
   tripId: string;
   name: string;
   arriveBy: string | null;
   status: TripStatus;
   createdAt: string;
-  destination: {
-    name: string;
-    address: string;
-    lat: number;
-    lng: number;
-  };
+  destination: TripDestination;
+  participants: TripParticipant[];
 }

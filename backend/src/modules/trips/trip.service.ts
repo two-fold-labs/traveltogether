@@ -12,13 +12,14 @@ import {
 } from './trip.constants.js';
 import { mapTrip } from './trip.mapper.js';
 import * as tripRepository from './trip.repository.js';
+import type { PublicTrip } from './trip.types.js';
 
 const createTrip = async (
   name: string,
   destinationPlaceId: string,
   arriveBy: Date,
   userId: string,
-) => {
+): Promise<PublicTrip> => {
   const placeDetails =
     await googlePlacesClient.getPlaceDetails(destinationPlaceId);
 
@@ -31,7 +32,7 @@ const createTrip = async (
     ]);
   }
 
-  const tripWithDestination = await withTransaction(async () => {
+  const tripWithDetails = await withTransaction(async () => {
     const location = await tripRepository.insertLocation({
       name: placeDetails.name,
       address: placeDetails.address,
@@ -50,17 +51,27 @@ const createTrip = async (
       });
 
       if (trip) {
-        return { trip, location };
+        // Todo: We are passing destinationId as source_location_id. Later, we'll get the data from UI and pass it.
+        const participant = await tripRepository.insertTripParticipant({
+          tripId: trip.id,
+          userId,
+          isOwner: true,
+          sourceLocationId: location.id,
+        });
+
+        return { trip, location, participant };
       }
     }
 
     throw new Error('Failed to generate a unique trip ID.');
   });
 
-  return mapTrip(tripWithDestination.trip, tripWithDestination.location);
+  return mapTrip(tripWithDetails.trip, tripWithDetails.location, [
+    tripWithDetails.participant,
+  ]);
 };
 
-const getTrip = async (tripId: string) => {
+const getTrip = async (userId: string, tripId: string): Promise<PublicTrip> => {
   const tripWithDestination =
     await tripRepository.findTripWithDestinationByTripId(tripId);
 
@@ -68,7 +79,22 @@ const getTrip = async (tripId: string) => {
     throw new NotFoundError('Trip not found.');
   }
 
-  return mapTrip(tripWithDestination.trip, tripWithDestination.location);
+  const tripParticipants = await tripRepository.findTripParticipantsByTripId(
+    tripWithDestination.trip.id,
+  );
+  const isUserTripParticipant = tripParticipants.some(
+    (participant) => participant.user_id === userId,
+  );
+
+  if (!isUserTripParticipant) {
+    throw new NotFoundError('Trip not found.');
+  }
+
+  return mapTrip(
+    tripWithDestination.trip,
+    tripWithDestination.location,
+    tripParticipants,
+  );
 };
 
 const generateTripId = () => {

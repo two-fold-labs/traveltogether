@@ -1,8 +1,10 @@
-import db from '#config/db.js';
+import { getDb } from '#config/db.js';
 
 import type { User } from './auth.types.js';
 
 const findUserById = async (userId: string) => {
+  const db = getDb();
+
   const text = `SELECT * FROM users WHERE id = $1`;
   const values = [userId];
 
@@ -12,6 +14,7 @@ const findUserById = async (userId: string) => {
 };
 
 const createGuestUser = async (userName: string) => {
+  const db = getDb();
   const text = `INSERT INTO users(name, is_anonymous) VALUES($1, $2) RETURNING id, name, is_anonymous`;
   const values = [userName, true];
 
