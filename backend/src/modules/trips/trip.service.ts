@@ -12,7 +12,11 @@ import {
 } from './trip.constants.js';
 import { mapTrip } from './trip.mapper.js';
 import * as tripRepository from './trip.repository.js';
-import type { PublicTrip, TripParticipantRow } from './trip.types.js';
+import type {
+  PublicTrip,
+  PublicTripList,
+  TripParticipantRow,
+} from './trip.types.js';
 
 const createTrip = async (
   name: string,
@@ -97,12 +101,12 @@ const getTrip = async (userId: string, tripId: string): Promise<PublicTrip> => {
   );
 };
 
-const getTrips = async (userId: string): Promise<PublicTrip[]> => {
+const getTrips = async (userId: string): Promise<PublicTripList> => {
   const tripsWithDestination =
     await tripRepository.findTripsWithDestinationByUserId(userId);
 
   if (tripsWithDestination.length === 0) {
-    return [];
+    return { trips: [] };
   }
 
   const participants = await tripRepository.findTripParticipantsByTripRowIds(
@@ -121,9 +125,11 @@ const getTrips = async (userId: string): Promise<PublicTrip[]> => {
     }
   }
 
-  return tripsWithDestination.map(({ trip, location }) =>
-    mapTrip(trip, location, participantsByTripRowId.get(trip.id) ?? []),
-  );
+  return {
+    trips: tripsWithDestination.map(({ trip, location }) =>
+      mapTrip(trip, location, participantsByTripRowId.get(trip.id) ?? []),
+    ),
+  };
 };
 
 const generateTripId = () => {

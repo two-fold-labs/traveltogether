@@ -62,3 +62,7 @@ export type PublicTrip = {
   destination: PublicLocation;
   participants: PublicParticipant[];
 };
+
+export type PublicTripList = {
+  trips: PublicTrip[];
+};
