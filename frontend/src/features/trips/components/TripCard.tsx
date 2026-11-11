@@ -13,7 +13,8 @@ interface TripCardProps {
   onEdit: (tripId: string) => void;
 }
 
-const BADGE_CLASS = 'inline-flex items-center gap-1 rounded-full px-2 py-0.5';
+const BADGE_CLASS =
+  'inline-flex items-center gap-1 rounded-full border px-2 py-0.5';
 
 const getStatusLabel = (trip: TripCardData): string => {
   if (trip.status === 'started') {
@@ -37,23 +38,23 @@ const TripCard = ({ trip, onView, onEdit }: TripCardProps) => {
       <Stack spacing={1}>
         <Stack direction="row" useFlexGap className="flex-wrap gap-1.5">
           <Typography
-            variant="overline"
+            variant="badge"
             component="span"
             className={
               isLive
-                ? `${BADGE_CLASS} bg-success/15 text-success`
-                : `${BADGE_CLASS} bg-primary/15 text-primary`
+                ? `${BADGE_CLASS} border-transparent bg-success/15 text-success`
+                : `${BADGE_CLASS} border-transparent bg-primary/15 text-primary`
             }
           >
             {getStatusLabel(trip)}
           </Typography>
           <Typography
-            variant="overline"
+            variant="badge"
             component="span"
             className={
               trip.isOwner
-                ? `${BADGE_CLASS} bg-brand-500/15 text-brand-600 dark:text-brand-300`
-                : `${BADGE_CLASS} border border-border bg-background text-muted-foreground`
+                ? `${BADGE_CLASS} border-transparent bg-brand-500/15 text-brand-600 dark:text-brand-300`
+                : `${BADGE_CLASS} border-border bg-background text-muted-foreground`
             }
           >
             <Icon name={trip.isOwner ? 'crown' : 'userGroup'} />

@@ -15,11 +15,7 @@ interface PresetChipsProps {
 
 const PresetChips = ({ title, options, onSelect }: PresetChipsProps) => (
   <Stack spacing={1}>
-    <Typography
-      variant="overline"
-      color="text.disabled"
-      className="text-[10px]"
-    >
+    <Typography variant="badge" color="text.disabled">
       {title}
     </Typography>
     <Stack direction="row" useFlexGap spacing={1.5} className="flex-wrap">

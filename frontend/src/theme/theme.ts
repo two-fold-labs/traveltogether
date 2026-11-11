@@ -101,6 +101,14 @@ let theme = createTheme({
       letterSpacing: '0.05em',
       lineHeight: 1.33,
     },
+    // small uppercase pill text (status / role badges)
+    badge: {
+      fontSize: fontSize['2xs'],
+      fontWeight: fontWeight.bold,
+      letterSpacing: '0.05em',
+      lineHeight: 1.4,
+      textTransform: 'uppercase',
+    },
     button: {
       fontSize: fontSize.xs,
       fontWeight: fontWeight.bold,

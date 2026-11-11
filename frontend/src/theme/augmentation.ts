@@ -11,6 +11,18 @@ declare module '@mui/material/styles' {
   interface TypeBackground {
     muted: string; // chips, inputs, subtle buttons
   }
+  interface TypographyVariants {
+    badge: React.CSSProperties;
+  }
+  interface TypographyVariantsOptions {
+    badge?: React.CSSProperties;
+  }
+}
+
+declare module '@mui/material/Typography' {
+  interface TypographyPropsVariantOverrides {
+    badge: true;
+  }
 }
 
 declare module '@mui/material/Button' {
