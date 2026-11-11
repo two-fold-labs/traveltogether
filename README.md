@@ -22,7 +22,7 @@ The frontend lives in `frontend/`. The API lives in `backend/`.
 
 ## Run locally
 
-You need Node.js 22, a local PostgreSQL database, and a Google Cloud API key with Places and Maps JavaScript enabled.
+You need Node.js 20.19+ or 22.12+, a local PostgreSQL database, and a Google Cloud API key with Places and Maps JavaScript enabled.
 
 ### API
 
