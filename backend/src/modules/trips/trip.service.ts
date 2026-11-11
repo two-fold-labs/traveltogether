@@ -71,7 +71,7 @@ const createTrip = async (
   ]);
 };
 
-const getTrip = async (tripId: string) => {
+const getTrip = async (userId: string, tripId: string): Promise<PublicTrip> => {
   const tripWithDestination =
     await tripRepository.findTripWithDestinationByTripId(tripId);
 
@@ -79,7 +79,22 @@ const getTrip = async (tripId: string) => {
     throw new NotFoundError('Trip not found.');
   }
 
-  return mapTrip(tripWithDestination.trip, tripWithDestination.location);
+  const tripParticipants = await tripRepository.findTripParticipantsByTripId(
+    tripWithDestination.trip.id,
+  );
+  const isUserTripParticipant = tripParticipants.some(
+    (participant) => participant.user_id === userId,
+  );
+
+  if (!isUserTripParticipant) {
+    throw new NotFoundError('Trip not found.');
+  }
+
+  return mapTrip(
+    tripWithDestination.trip,
+    tripWithDestination.location,
+    tripParticipants,
+  );
 };
 
 const generateTripId = () => {

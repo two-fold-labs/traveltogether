@@ -147,9 +147,23 @@ const findTripWithDestinationByTripId = async (tripId: string) => {
   return { trip, location };
 };
 
+const findTripParticipantsByTripId = async (tripId: string) => {
+  const db = getDb();
+  const text = `SELECT
+                  id, trip_id, user_id, is_owner, joined_at, source_location_id
+                  FROM trip_participants
+                  WHERE trip_id = $1
+                  ORDER BY joined_at, id ASC`;
+  const values = [tripId];
+  const result = await db.query<TripParticipantsRow>(text, values);
+
+  return result.rows;
+};
+
 export {
   insertLocation,
   insertTrip,
   insertTripParticipant,
   findTripWithDestinationByTripId,
+  findTripParticipantsByTripId,
 };
