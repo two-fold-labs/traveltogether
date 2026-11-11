@@ -1,12 +1,11 @@
 import Button from '@mui/material/Button';
-import Skeleton from '@mui/material/Skeleton';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
 import { Icon } from '@/components/ui/Icon';
 
 import { type TripCardData } from '../types';
-import TripCard from './TripCard';
+import TripList from './TripList';
 
 const PREVIEW_COUNT = 2;
 
@@ -18,49 +17,6 @@ interface UpcomingTripsProps {
   onEditTrip: (tripId: string) => void;
   onSeeAll: () => void;
 }
-
-interface TripListProps {
-  trips: TripCardData[];
-  isLoading: boolean;
-  onViewTrip: (tripId: string) => void;
-  onEditTrip: (tripId: string) => void;
-}
-
-const TripList = ({
-  trips,
-  isLoading,
-  onViewTrip,
-  onEditTrip,
-}: TripListProps) => {
-  if (isLoading) {
-    return Array.from({ length: PREVIEW_COUNT }, (_, index) => (
-      <Skeleton key={index} variant="rounded" className="h-44 rounded-3xl" />
-    ));
-  }
-
-  if (trips.length === 0) {
-    return (
-      <Typography
-        variant="body2"
-        color="text.secondary"
-        className="rounded-3xl border-2 border-dashed border-border p-6 text-center"
-      >
-        No upcoming trips yet. Plan one or join with a code.
-      </Typography>
-    );
-  }
-
-  return trips
-    .slice(0, PREVIEW_COUNT)
-    .map((trip) => (
-      <TripCard
-        key={trip.tripId}
-        trip={trip}
-        onView={onViewTrip}
-        onEdit={onEditTrip}
-      />
-    ));
-};
 
 const UpcomingTrips = ({
   trips,
@@ -82,7 +38,7 @@ const UpcomingTrips = ({
           variant="overline"
           component="h3"
           color="text.secondary"
-          className="flex items-center gap-1.5 uppercase"
+          className="flex items-center gap-1.5"
         >
           <Icon name="suitcaseRolling" className="text-brand-500" />
           Upcoming Trips
@@ -102,6 +58,7 @@ const UpcomingTrips = ({
       <TripList
         trips={trips}
         isLoading={isLoading}
+        previewCount={PREVIEW_COUNT}
         onViewTrip={onViewTrip}
         onEditTrip={onEditTrip}
       />

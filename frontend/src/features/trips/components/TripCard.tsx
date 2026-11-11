@@ -13,8 +13,7 @@ interface TripCardProps {
   onEdit: (tripId: string) => void;
 }
 
-const BADGE_CLASS =
-  'inline-flex items-center gap-1 rounded-full px-2 py-0.5 uppercase';
+const BADGE_CLASS = 'inline-flex items-center gap-1 rounded-full px-2 py-0.5';
 
 const getStatusLabel = (trip: TripCardData): string => {
   if (trip.status === 'started') {
