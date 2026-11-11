@@ -12,7 +12,11 @@ import {
 } from './trip.constants.js';
 import { mapTrip } from './trip.mapper.js';
 import * as tripRepository from './trip.repository.js';
-import type { PublicTrip } from './trip.types.js';
+import type {
+  PublicTrip,
+  PublicTripList,
+  TripParticipantRow,
+} from './trip.types.js';
 
 const createTrip = async (
   name: string,
@@ -32,7 +36,7 @@ const createTrip = async (
     ]);
   }
 
-  const tripWithDetails = await withTransaction(async () => {
+  const createdTrip = await withTransaction(async () => {
     const location = await tripRepository.insertLocation({
       name: placeDetails.name,
       address: placeDetails.address,
@@ -51,9 +55,9 @@ const createTrip = async (
       });
 
       if (trip) {
-        // Todo: We are passing destinationId as source_location_id. Later, we'll get the data from UI and pass it.
+        // TODO: Using the destination location as source_location_id for now. Later, the UI will send the source location.
         const participant = await tripRepository.insertTripParticipant({
-          tripId: trip.id,
+          tripRowId: trip.id,
           userId,
           isOwner: true,
           sourceLocationId: location.id,
@@ -66,8 +70,8 @@ const createTrip = async (
     throw new Error('Failed to generate a unique trip ID.');
   });
 
-  return mapTrip(tripWithDetails.trip, tripWithDetails.location, [
-    tripWithDetails.participant,
+  return mapTrip(createdTrip.trip, createdTrip.location, [
+    createdTrip.participant,
   ]);
 };
 
@@ -79,7 +83,7 @@ const getTrip = async (userId: string, tripId: string): Promise<PublicTrip> => {
     throw new NotFoundError('Trip not found.');
   }
 
-  const tripParticipants = await tripRepository.findTripParticipantsByTripId(
+  const tripParticipants = await tripRepository.findTripParticipantsByTripRowId(
     tripWithDestination.trip.id,
   );
   const isUserTripParticipant = tripParticipants.some(
@@ -97,6 +101,37 @@ const getTrip = async (userId: string, tripId: string): Promise<PublicTrip> => {
   );
 };
 
+const getTrips = async (userId: string): Promise<PublicTripList> => {
+  const tripsWithDestination =
+    await tripRepository.findTripsWithDestinationByUserId(userId);
+
+  if (tripsWithDestination.length === 0) {
+    return { trips: [] };
+  }
+
+  const participants = await tripRepository.findTripParticipantsByTripRowIds(
+    tripsWithDestination.map(({ trip }) => trip.id),
+  );
+
+  const participantsByTripRowId = new Map<string, TripParticipantRow[]>();
+
+  for (const participant of participants) {
+    const tripParticipants = participantsByTripRowId.get(participant.trip_id);
+
+    if (tripParticipants) {
+      tripParticipants.push(participant);
+    } else {
+      participantsByTripRowId.set(participant.trip_id, [participant]);
+    }
+  }
+
+  return {
+    trips: tripsWithDestination.map(({ trip, location }) =>
+      mapTrip(trip, location, participantsByTripRowId.get(trip.id) ?? []),
+    ),
+  };
+};
+
 const generateTripId = () => {
   let suffix = '';
 
@@ -107,4 +142,4 @@ const generateTripId = () => {
   return `${TRIP_ID_PREFIX}${suffix}`;
 };
 
-export { createTrip, getTrip };
+export { createTrip, getTrip, getTrips };

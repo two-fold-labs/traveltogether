@@ -25,6 +25,17 @@ const createTrip: RequestHandler = async (req, res, next) => {
   }
 };
 
+const getTrips: RequestHandler = async (_req, res, next) => {
+  try {
+    const userId = getUserId(res);
+    const response = await tripService.getTrips(userId);
+
+    res.status(200).json(response);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getTrip: RequestHandler = async (req, res, next) => {
   try {
     const userId = getUserId(res);
@@ -38,4 +49,4 @@ const getTrip: RequestHandler = async (req, res, next) => {
   }
 };
 
-export { createTrip, getTrip };
+export { createTrip, getTrip, getTrips };
