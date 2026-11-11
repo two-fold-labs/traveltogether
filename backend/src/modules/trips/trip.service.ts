@@ -51,7 +51,7 @@ const createTrip = async (
       });
 
       if (trip) {
-        // Todo: We are passing destinationId as source_location_id. Later, we'll get the data from UI and pass it.
+        // TODO: Using the destination location as source_location_id for now. Later, the UI will send the source location.
         const participant = await tripRepository.insertTripParticipant({
           tripRowId: trip.id,
           userId,

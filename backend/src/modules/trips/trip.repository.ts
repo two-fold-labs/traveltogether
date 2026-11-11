@@ -174,6 +174,7 @@ const findTripParticipantsByTripRowIds = async (tripRowIds: string[]) => {
   return result.rows;
 };
 
+// Trips the user participates in, not only the ones they created.
 const findTripsWithDestinationByUserId = async (userId: string) => {
   const db = getDb();
 
@@ -192,9 +193,8 @@ const findTripsWithDestinationByUserId = async (userId: string) => {
   const values = [userId, TRIP_LIST_LIMIT];
 
   const result = await db.query<TripWithDestinationRow>(text, values);
-  const rows = result.rows;
 
-  return rows.map((row) => {
+  return result.rows.map((row) => {
     const trip: TripRow = {
       id: row.id,
       trip_id: row.trip_id,
