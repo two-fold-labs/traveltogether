@@ -1,5 +1,6 @@
 import { getDb } from '#config/db.js';
 
+import { TRIP_LIST_LIMIT } from './trip.constants.js';
 import type {
   TripRow,
   LocationRow,
@@ -160,10 +161,71 @@ const findTripParticipantsByTripId = async (tripId: string) => {
   return result.rows;
 };
 
+const findTripParticipantsByTripIds = async (tripIds: string[]) => {
+  const db = getDb();
+  const text = `SELECT
+                  id, trip_id, user_id, is_owner, joined_at, source_location_id
+                  FROM trip_participants
+                  WHERE trip_id = ANY($1)
+                  ORDER BY joined_at, id ASC`;
+  const values = [tripIds];
+  const result = await db.query<TripParticipantsRow>(text, values);
+
+  return result.rows;
+};
+
+const findTripsWithDestinationByUserId = async (userId: string) => {
+  const db = getDb();
+
+  const text = `SELECT
+                  t.id, t.trip_id, t.name, t.arrive_by, t.status, t.created_at, t.started_at, t.ended_at,
+                  t.created_by, t.destination_location_id, l.id AS location_id, l.name AS location_name,
+                  l.address AS location_address, l.latitude AS location_latitude, l.longitude AS location_longitude
+                FROM trips t
+                INNER JOIN locations l ON l.id = t.destination_location_id
+                WHERE EXISTS (
+                  SELECT 1 FROM trip_participants tp
+                  WHERE tp.trip_id = t.id AND tp.user_id = $1
+                )
+                ORDER BY t.created_at DESC, t.id
+                LIMIT $2`;
+  const values = [userId, TRIP_LIST_LIMIT];
+
+  const result = await db.query<TripWithDestinationRow>(text, values);
+  const rows = result.rows;
+
+  return rows.map((row) => {
+    const trip: TripRow = {
+      id: row.id,
+      trip_id: row.trip_id,
+      name: row.name,
+      arrive_by: row.arrive_by,
+      status: row.status,
+      created_at: row.created_at,
+      started_at: row.started_at,
+      ended_at: row.ended_at,
+      destination_location_id: row.destination_location_id,
+      created_by: row.created_by,
+    };
+
+    const location: LocationRow = {
+      id: row.location_id,
+      name: row.location_name,
+      address: row.location_address,
+      latitude: row.location_latitude,
+      longitude: row.location_longitude,
+    };
+
+    return { trip, location };
+  });
+};
+
 export {
   insertLocation,
   insertTrip,
   insertTripParticipant,
   findTripWithDestinationByTripId,
   findTripParticipantsByTripId,
+  findTripParticipantsByTripIds,
+  findTripsWithDestinationByUserId,
 };

@@ -12,7 +12,7 @@ import {
 } from './trip.constants.js';
 import { mapTrip } from './trip.mapper.js';
 import * as tripRepository from './trip.repository.js';
-import type { PublicTrip } from './trip.types.js';
+import type { PublicTrip, TripParticipantsRow } from './trip.types.js';
 
 const createTrip = async (
   name: string,
@@ -97,6 +97,35 @@ const getTrip = async (userId: string, tripId: string): Promise<PublicTrip> => {
   );
 };
 
+const getTrips = async (userId: string): Promise<PublicTrip[]> => {
+  const tripsWithDestination =
+    await tripRepository.findTripsWithDestinationByUserId(userId);
+
+  if (tripsWithDestination.length === 0) {
+    return [];
+  }
+
+  const participants = await tripRepository.findTripParticipantsByTripIds(
+    tripsWithDestination.map(({ trip }) => trip.id),
+  );
+
+  const participantsByTripId = new Map<string, TripParticipantsRow[]>();
+
+  for (const participant of participants) {
+    const tripParticipants = participantsByTripId.get(participant.trip_id);
+
+    if (tripParticipants) {
+      tripParticipants.push(participant);
+    } else {
+      participantsByTripId.set(participant.trip_id, [participant]);
+    }
+  }
+
+  return tripsWithDestination.map(({ trip, location }) =>
+    mapTrip(trip, location, participantsByTripId.get(trip.id) ?? []),
+  );
+};
+
 const generateTripId = () => {
   let suffix = '';
 
@@ -107,4 +136,4 @@ const generateTripId = () => {
   return `${TRIP_ID_PREFIX}${suffix}`;
 };
 
-export { createTrip, getTrip };
+export { createTrip, getTrip, getTrips };

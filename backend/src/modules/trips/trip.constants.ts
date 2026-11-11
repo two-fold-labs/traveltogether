@@ -11,3 +11,5 @@ export const TRIP_ID_SUFFIX_LENGTH = 8;
 // Excludes look-alike characters: I, L, O, 0, 1.
 export const TRIP_ID_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
 export const TRIP_ID_MAX_ATTEMPTS = 5;
+// TODO: Replace this hardcoded cap with pagination on GET /trips.
+export const TRIP_LIST_LIMIT = 50;
