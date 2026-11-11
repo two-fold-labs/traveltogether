@@ -1,8 +1,8 @@
 # Trip Sync
 
-A trip planner for groups. Name the trip, pick a destination, set when you want to arrive, and come back to it later.
+A trip planner for groups. Name the trip, pick a destination, and set when you want to arrive.
 
-This repository is proprietary. You may read the code. You may not copy, modify, or reuse it without written permission from Two-Fold Labs. See [LICENSE](LICENSE).
+This repository is proprietary. Viewing it does not grant any rights. You may not copy, modify, or reuse the code without written permission from Two-Fold Labs. See [LICENSE](LICENSE).
 
 ## What it does today
 
