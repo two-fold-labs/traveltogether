@@ -62,3 +62,14 @@ export interface CreateTripResponse {
   destination: TripDestination;
   participants: TripParticipant[];
 }
+
+// What a trip card needs. Map each API trip to this shape before rendering,
+// so the card does not depend on the full API response.
+export interface TripCardData {
+  tripId: string;
+  name: string;
+  destinationName: string;
+  arriveBy: string | null;
+  status: TripStatus;
+  isOwner: boolean;
+}

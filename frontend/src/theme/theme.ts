@@ -118,6 +118,10 @@ let theme = createTheme({
           '& > *:nth-of-type(1)': { fontSize: fontSize.xs }, // beats MUI's 20px default
           color: theme.vars.palette.brand[500],
         }),
+        endIcon: {
+          margin: 0,
+          '& > *:nth-of-type(1)': { fontSize: fontSize.xs },
+        },
       },
       variants: [
         // contained + primary = brand gradient (every Create-style button gets it)

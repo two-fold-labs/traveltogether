@@ -4,3 +4,7 @@ export { default as JoinTripButton } from './components/JoinTripButton';
 export { default as CreateTripButton } from './components/CreateTripButton';
 export { type CreateTripValues } from './types';
 export { useCreateTrip } from './hooks/useCreateTrip';
+export { default as TripCard } from './components/TripCard';
+export { default as UpcomingTrips } from './components/UpcomingTrips';
+export { type TripCardData } from './types';
+export { mockUpcomingTrips } from './mockTrips';
