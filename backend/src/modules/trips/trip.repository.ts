@@ -100,30 +100,7 @@ const insertTripParticipant = async ({
   return tripParticipant;
 };
 
-const findTripWithDestinationByTripId = async (tripId: string) => {
-  const db = getDb();
-
-  const result = await db.query<TripWithDestinationRow>(
-    `SELECT
-       t.id, t.trip_id, t.name, t.arrive_by, t.status, t.created_at,
-       t.started_at, t.ended_at, t.destination_location_id, t.created_by,
-       l.id AS location_id,
-       l.name AS location_name,
-       l.address AS location_address,
-       l.latitude AS location_latitude,
-       l.longitude AS location_longitude
-     FROM trips t
-     INNER JOIN locations l ON l.id = t.destination_location_id
-     WHERE t.trip_id = $1`,
-    [tripId],
-  );
-
-  const row = result.rows[0];
-
-  if (!row) {
-    return undefined;
-  }
-
+const toTripWithLocation = (row: TripWithDestinationRow) => {
   const trip: TripRow = {
     id: row.id,
     trip_id: row.trip_id,
@@ -148,6 +125,33 @@ const findTripWithDestinationByTripId = async (tripId: string) => {
   return { trip, location };
 };
 
+const findTripWithDestinationByTripId = async (tripId: string) => {
+  const db = getDb();
+
+  const result = await db.query<TripWithDestinationRow>(
+    `SELECT
+       t.id, t.trip_id, t.name, t.arrive_by, t.status, t.created_at,
+       t.started_at, t.ended_at, t.destination_location_id, t.created_by,
+       l.id AS location_id,
+       l.name AS location_name,
+       l.address AS location_address,
+       l.latitude AS location_latitude,
+       l.longitude AS location_longitude
+     FROM trips t
+     INNER JOIN locations l ON l.id = t.destination_location_id
+     WHERE t.trip_id = $1`,
+    [tripId],
+  );
+
+  const row = result.rows[0];
+
+  if (!row) {
+    return undefined;
+  }
+
+  return toTripWithLocation(row);
+};
+
 const findTripParticipantsByTripRowId = async (tripRowId: string) => {
   const db = getDb();
   const text = `SELECT
@@ -166,7 +170,7 @@ const findTripParticipantsByTripRowIds = async (tripRowIds: string[]) => {
   const text = `SELECT
                   id, trip_id, user_id, is_owner, joined_at, source_location_id
                   FROM trip_participants
-                  WHERE trip_id = ANY($1)
+                  WHERE trip_id = ANY($1::uuid[])
                   ORDER BY joined_at, id ASC`;
   const values = [tripRowIds];
   const result = await db.query<TripParticipantRow>(text, values);
@@ -194,30 +198,7 @@ const findTripsWithDestinationByUserId = async (userId: string) => {
 
   const result = await db.query<TripWithDestinationRow>(text, values);
 
-  return result.rows.map((row) => {
-    const trip: TripRow = {
-      id: row.id,
-      trip_id: row.trip_id,
-      name: row.name,
-      arrive_by: row.arrive_by,
-      status: row.status,
-      created_at: row.created_at,
-      started_at: row.started_at,
-      ended_at: row.ended_at,
-      destination_location_id: row.destination_location_id,
-      created_by: row.created_by,
-    };
-
-    const location: LocationRow = {
-      id: row.location_id,
-      name: row.location_name,
-      address: row.location_address,
-      latitude: row.location_latitude,
-      longitude: row.location_longitude,
-    };
-
-    return { trip, location };
-  });
+  return result.rows.map(toTripWithLocation);
 };
 
 export {
