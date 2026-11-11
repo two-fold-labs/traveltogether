@@ -9,7 +9,6 @@ This repository is proprietary. You may read the code. You may not copy, modify,
 - Create a trip with a name, destination, and arrival time
 - Search destinations with Google Places
 - Start as a guest, with no account required
-- Look up an existing trip by id
 
 ## Stack
 
@@ -23,7 +22,7 @@ The frontend lives in `frontend/`. The API lives in `backend/`.
 
 ## Run locally
 
-You need Node.js 22, a local PostgreSQL database, and a Google Places API key.
+You need Node.js 22, a local PostgreSQL database, and a Google Cloud API key with Places and Maps JavaScript enabled.
 
 ### API
 
@@ -47,6 +46,11 @@ The API listens on `http://localhost:3000`.
 ```bash
 cd frontend
 cp .env.example .env
+```
+
+Set `VITE_GOOGLE_MAPS_API_KEY` in `frontend/.env`. `VITE_API_BASE_URL` can stay `/api`. Then:
+
+```bash
 npm install
 npm run dev
 ```
