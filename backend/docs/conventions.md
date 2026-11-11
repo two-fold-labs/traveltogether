@@ -5,8 +5,20 @@ Read this when writing controller/service code, naming things, or using zod.
 ## Naming
 
 - Files: `<entity>.<layer>.ts` (`auth.service.ts`), see [architecture.md](architecture.md). Constants: `<entity>.constants.ts`.
-- Controller handlers are named for the user-facing action (`guestLogin`, `createTrip`). Services/repositories are named for the operation (`resolveGuestSession`, `createGuestUser`, `findUserById`).
-- Zod schemas: `camelCase` + `Schema` suffix (`cookieSchema`); inferred types are PascalCase (`Cookie`).
+- Controller handlers are named for the user-facing action (`guestLogin`, `createTrip`). Services are named for the business operation (`resolveGuestSession`, `createTrip`).
+- Zod schemas: `camelCase` + `Schema` suffix (`cookieSchema`).
+- Types (where each lives: [architecture.md](architecture.md#types-where-each-lives)). Each suffix means one thing; don't reuse it for another layer:
+
+  | Type             | Name                                                          |
+  | ---------------- | ------------------------------------------------------------- |
+  | Row              | `<Entity>Row` (`TripRow`, `LocationRow`)                      |
+  | Repository input | `Insert<Entity>Input`, `Update<Entity>Input`                  |
+  | Request          | `<Action><Entity><Source>`: `CreateTripBody`, `GetTripParams` |
+  | Public           | `Public<Entity>` (`PublicUser`, `PublicTrip`)                 |
+
+  `Body` / `Params` / `Query` name where the client sent it (`req.body`, `req.params`, `req.query`). `User` in `auth.types.ts` predates this and keeps its name until that file is touched; new types follow the table.
+
+- Repository functions are named for the SQL operation and the table, with the lookup key when it isn't obvious: `insertTrip`, `findUserById`, `findTripWithDestinationByTripId`. Use `insert` for writes, not `create`; `create` is for service operations.
 - Constants: `UPPER_SNAKE_CASE`, flat and descriptive (`AUTH_COOKIE_NAME`), not a grab-bag object. Use an `as const` object only for a real set of alternatives.
 
 ## Controller shape

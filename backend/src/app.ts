@@ -2,7 +2,7 @@ import cookieParser from 'cookie-parser';
 import express from 'express';
 
 import { NotFoundError } from '#errors/app-error.js';
-import { errorHandler } from '#middlewares/error-handler.js';
+import { errorHandler } from '#middlewares/error.middleware.js';
 
 import apiRouter from './routes.js';
 

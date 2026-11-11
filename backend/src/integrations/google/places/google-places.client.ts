@@ -2,9 +2,12 @@ import { PlacesClient } from '@googlemaps/places';
 
 import { env } from '#config/env.js';
 import type { LatLngLiteral } from '#types/location.types.js';
-import type { PlaceSearchResponse } from '#types/place.types.js';
+import type { PlaceDetails, PlaceSearchResponse } from '#types/place.types.js';
 
-import { mapAutocompleteResponse } from './google-places.mapper.js';
+import {
+  mapAutocompleteResponse,
+  mapPlaceDetails,
+} from './google-places.mapper.js';
 
 class GooglePlacesClient {
   private readonly placesClient: PlacesClient;
@@ -31,6 +34,21 @@ class GooglePlacesClient {
     });
 
     return mapAutocompleteResponse(response);
+  }
+
+  async getPlaceDetails(placeId: string): Promise<PlaceDetails | null> {
+    const [place] = await this.placesClient.getPlace(
+      { name: `places/${placeId}` },
+      {
+        otherArgs: {
+          headers: {
+            'X-Goog-FieldMask': 'id,displayName,formattedAddress,location',
+          },
+        },
+      },
+    );
+
+    return mapPlaceDetails(place);
   }
 }
 

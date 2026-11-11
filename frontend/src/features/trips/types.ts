@@ -1,5 +1,16 @@
 import { type IconName } from '@/components/ui/Icon';
 
+export interface PlaceSuggestion {
+  id: string;
+  name: string;
+  address: string;
+  distanceMeters?: number;
+}
+
+export interface PlaceSearchResponse {
+  places: PlaceSuggestion[];
+}
+
 export interface LocationOption {
   id: string;
   name: string;
@@ -11,7 +22,31 @@ export interface LocationOption {
 }
 
 export interface CreateTripValues {
-  tripName: string;
+  name: string;
   arriveBy: string;
-  destination: LocationOption | null;
+  destination: PlaceSuggestion | null;
+}
+
+export type CreateTripErrors = Partial<Record<keyof CreateTripValues, string>>;
+
+export interface CreateTripRequest {
+  name: string;
+  arriveBy: string;
+  destinationPlaceId: string;
+}
+
+export type TripStatus = 'created' | 'started' | 'ended';
+
+export interface CreateTripResponse {
+  tripId: string;
+  name: string;
+  arriveBy: string | null;
+  status: TripStatus;
+  createdAt: string;
+  destination: {
+    name: string;
+    address: string;
+    lat: number;
+    lng: number;
+  };
 }
