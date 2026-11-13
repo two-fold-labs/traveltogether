@@ -7,6 +7,8 @@ description: Draft and create a well-formed Jira ticket in the trip-tracker proj
 
 Turn something we decided not to do right now into a ticket that makes sense weeks later with no other context.
 
+Keep the Cursor and Claude copies identical (`.cursor/skills/jira-ticket/` and `.claude/skills/jira-ticket/`).
+
 Two cases:
 - **Deferred:** something new came up that's out of scope for the current work.
 - **Split-out:** part of the current task is left unfinished. Ticket the remainder so the main feature can ship in a working state from the user's point of view. This does **not** mean changing the main ticket's Jira status — never transition it; the user decides that. In the description, say what was already done, what's left, and reference the original ticket (if any) as a linked issue. If the current task is a Story, the remainder can be a Subtask under it; otherwise make it a sibling of the same type.

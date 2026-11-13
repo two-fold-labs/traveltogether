@@ -1,5 +1,7 @@
 # Description templates
 
+Keep the Cursor and Claude copies identical (`.cursor/skills/jira-ticket/` and `.claude/skills/jira-ticket/`).
+
 One per issue type. Read only the section you need. Drop a section only if it truly doesn't apply.
 
 ### Story
