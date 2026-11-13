@@ -25,6 +25,15 @@ Offer to log a Jira ticket (project `TT`) with the `jira-ticket` skill (`.claude
 
 Never create a ticket without the user's confirmation.
 
+## Doc-worthy discussion → Confluence
+
+Offer to create or update the team wiki (space TTP) with the `confluence-docs` skill (`.claude/skills/confluence-docs/`) when:
+
+- a product decision or idea was discussed, or
+- as-built behaviour, architecture, database, API, or an engineering convention changed.
+
+Prompt with the points discussed. Never create or edit Confluence without the user's confirmation.
+
 ## MCP servers
 
 Cursor reads **`.cursor/mcp.json`**. Root **`.mcp.json`** is the portable copy (same servers) for other MCP clients. Other files under `.cursor/` stay local (gitignored). Enable the servers in Cursor Settings → MCP. Do not put secrets in either file.

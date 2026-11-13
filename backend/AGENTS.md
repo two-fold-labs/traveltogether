@@ -29,6 +29,15 @@ Offer to log a Jira ticket (project `TT`) with the `jira-ticket` skill (`.claude
 
 Never create a ticket without the user's confirmation.
 
+## Doc-worthy discussion → Confluence
+
+Offer to create or update the team wiki (space TTP) with the `confluence-docs` skill (`.claude/skills/confluence-docs/`) when:
+
+- a product decision or idea was discussed, or
+- as-built behaviour, architecture, database, API, or an engineering convention changed.
+
+Prompt with the points discussed. Never create or edit Confluence without the user's confirmation.
+
 ## Read the matching doc before starting
 
 | When you are…                                                       | Read                                                 |
