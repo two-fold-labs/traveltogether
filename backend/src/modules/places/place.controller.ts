@@ -1,6 +1,10 @@
 import type { RequestHandler } from 'express';
 
-import { searchPlaceQuerySchema } from './place.schema.js';
+import {
+  getPlaceDetailsParamsSchema,
+  reversePlaceQuerySchema,
+  searchPlaceQuerySchema,
+} from './place.schema.js';
 import * as placeService from './place.service.js';
 
 const searchPlace: RequestHandler = async (req, res, next) => {
@@ -18,4 +22,28 @@ const searchPlace: RequestHandler = async (req, res, next) => {
   }
 };
 
-export { searchPlace };
+const getPlaceDetails: RequestHandler = async (req, res, next) => {
+  try {
+    const { placeId } = getPlaceDetailsParamsSchema.parse(req.params);
+
+    const response = await placeService.getPlaceLocation(placeId);
+
+    res.status(200).json(response);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const reversePlace: RequestHandler = async (req, res, next) => {
+  try {
+    const { lat, lng } = reversePlaceQuerySchema.parse(req.query);
+
+    const response = await placeService.reversePlaceLocation({ lat, lng });
+
+    res.status(200).json(response);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { searchPlace, getPlaceDetails, reversePlace };
