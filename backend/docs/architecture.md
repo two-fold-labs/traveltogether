@@ -11,7 +11,7 @@ src/
 ├── config/              # env.ts, db.ts
 ├── constants/           # constants shared by 2+ modules
 ├── errors/              # AppError + subclasses, error codes, error types
-├── integrations/        # third-party API clients + mappers (google/places)
+├── integrations/        # third-party API clients + mappers (google/places, google/geocoding, google.constants.ts)
 ├── middlewares/         # shared Express middlewares (errorHandler)
 ├── shared/utils/        # pure helpers used by 2+ modules
 ├── types/               # types shared by 2+ modules
