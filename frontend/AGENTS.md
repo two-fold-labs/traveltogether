@@ -27,7 +27,7 @@ Never create a ticket without the user's confirmation.
 
 ## Doc-worthy discussion → Confluence
 
-Offer to create or update the team wiki (space TTP) with the `confluence-docs` skill (`.claude/skills/confluence-docs/`) when:
+Offer to create or update the team wiki (space TTP) with the `confluence-docs` skill (`.cursor/skills/confluence-docs/`, same files in `.claude/skills/confluence-docs/` for Claude Code) when:
 
 - a product decision or idea was discussed, or
 - as-built behaviour, architecture, database, API, or an engineering convention changed.
@@ -36,7 +36,7 @@ Prompt with the points discussed. Never create or edit Confluence without the us
 
 ## MCP servers
 
-Cursor reads **`.cursor/mcp.json`**. Root **`.mcp.json`** is the portable copy (same servers) for other MCP clients. Other files under `.cursor/` stay local (gitignored). Enable the servers in Cursor Settings → MCP. Do not put secrets in either file.
+Cursor reads **`.cursor/mcp.json`**. Root **`.mcp.json`** is the portable copy (same servers) for other MCP clients. Shared under `.cursor/`: `mcp.json`, `skills/`, and tracked files in `rules/`. Everything else under `.cursor/` stays local (gitignored). Enable the servers in Cursor Settings → MCP. Do not put secrets in either file.
 
 | Server       | Use for                                     | Notes                                                                  |
 | ------------ | ------------------------------------------- | ---------------------------------------------------------------------- |

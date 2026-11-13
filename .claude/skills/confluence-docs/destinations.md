@@ -8,6 +8,8 @@ Search before creating: `space = TTP AND title ~ "<keywords>"`.
 
 Hub: [Trip Tracker documentation](https://two-fold-labs.atlassian.net/wiki/spaces/TTP/overview) (homepage id `622698`).
 
+Keep the Cursor and Claude copies identical (`.cursor/skills/confluence-docs/` and `.claude/skills/confluence-docs/`).
+
 ## Folders
 
 | Folder | Id | Put here |

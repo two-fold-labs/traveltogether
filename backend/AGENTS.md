@@ -31,7 +31,7 @@ Never create a ticket without the user's confirmation.
 
 ## Doc-worthy discussion → Confluence
 
-Offer to create or update the team wiki (space TTP) with the `confluence-docs` skill (`.claude/skills/confluence-docs/`) when:
+Offer to create or update the team wiki (space TTP) with the `confluence-docs` skill (`.cursor/skills/confluence-docs/`, same files in `.claude/skills/confluence-docs/` for Claude Code) when:
 
 - a product decision or idea was discussed, or
 - as-built behaviour, architecture, database, API, or an engineering convention changed.

@@ -11,6 +11,8 @@ Repo `AGENTS.md` / `docs/` stay the agent source of truth. Update those in the s
 
 Jira is work to do (`jira-ticket`). Confluence is what we believe or how it works. An idea can need both; prompt each skill separately.
 
+Keep the Cursor and Claude copies identical (`.cursor/skills/confluence-docs/` and `.claude/skills/confluence-docs/`).
+
 ## When to prompt
 
 Prompt at the first natural pause after the points exist: end of a brainstorm, after “we decided X”, or before calling work done.
