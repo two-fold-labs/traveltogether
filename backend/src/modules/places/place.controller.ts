@@ -1,45 +1,20 @@
 import type { RequestHandler } from 'express';
 
-import type { LatLngLiteral } from '#types/location.types.js';
-
+import { searchPlaceQuerySchema } from './place.schema.js';
 import * as placeService from './place.service.js';
 
 const searchPlace: RequestHandler = async (req, res, next) => {
   try {
-    const { q, lat, lng } = req.query;
+    const { q, lat, lng } = searchPlaceQuerySchema.parse(req.query);
 
-    if (
-      typeof q !== 'string' ||
-      typeof lat !== 'string' ||
-      typeof lng !== 'string'
-    ) {
-      return res.status(400).json({
-        error:
-          "Missing or invalid query parameters. 'q', 'lat', and 'lng' must be strings.",
-      });
-    }
+    const response = await placeService.getSearchPlaceSuggestions(q, {
+      lat,
+      lng,
+    });
 
-    const latitude = parseFloat(lat);
-    const longitude = parseFloat(lng);
-
-    if (isNaN(latitude) || isNaN(longitude)) {
-      return res
-        .status(400)
-        .json({ error: 'Latitude and Longitude must be valid numbers.' });
-    }
-
-    const origin: LatLngLiteral = {
-      lat: latitude,
-      lng: longitude,
-    };
-
-    const response = await placeService.getSearchPlaceSuggestions(q, origin);
-
-    return res.status(200).json(response);
+    res.status(200).json(response);
   } catch (error) {
     next(error);
-
-    return;
   }
 };
 

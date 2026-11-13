@@ -39,4 +39,4 @@ Never create a ticket without the user's confirmation.
 | Touching login, guests, JWT, cookies, or the current user           | [docs/auth.md](docs/auth.md)                         |
 | Editing `AGENTS.md` or anything in `docs/`                          | [docs/maintaining-docs.md](docs/maintaining-docs.md) |
 
-Reference implementation for structure: `src/modules/auth/`. `src/modules/trips/` and `src/modules/places/` predate these rules (manual validation, relative imports, `models/` folder); don't copy their patterns.
+Reference implementation for structure: `src/modules/auth/`. Every module follows these rules; the only legacy leftovers are the module-specific files in `src/types/` (see [docs/architecture.md](docs/architecture.md#layout)).
