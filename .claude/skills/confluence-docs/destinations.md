@@ -14,7 +14,7 @@ Keep the Cursor and Claude copies identical (`.cursor/skills/confluence-docs/` a
 
 | Folder | Id | Put here |
 | --- | --- | --- |
-| [Product](https://two-fold-labs.atlassian.net/wiki/spaces/TTP/folder/4194305) | `4194305` | Overview, Decisions, Ideas |
+| [Product](https://two-fold-labs.atlassian.net/wiki/spaces/TTP/folder/4194305) | `4194305` | Overview only. Parents the Decisions and Ideas folders — do not create those pages here. |
 | [Decisions](https://two-fold-labs.atlassian.net/wiki/spaces/TTP/folder/4227074) | `4227074` | Locked product rules (may be unshipped) |
 | [Ideas](https://two-fold-labs.atlassian.net/wiki/spaces/TTP/folder/4227073) | `4227073` | Uncommitted product thoughts |
 | [Architecture](https://two-fold-labs.atlassian.net/wiki/spaces/TTP/folder/2949186) | `2949186` | System / frontend / backend / database |

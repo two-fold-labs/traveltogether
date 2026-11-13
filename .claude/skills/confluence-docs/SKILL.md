@@ -85,7 +85,8 @@ Only after confirmation.
 3. Classic pages, `contentWidth` wide. No Live Docs. ASCII diagrams in `pre` / text fences.
 4. Match the page you are changing: Decision pages stay “Not shipped” until the code exists; API pages keep curl, typed headers/body, status codes, sample responses; titles have no path.
 5. Link Related pages. Overview “Not built yet” should point at new Decisions; remove that line when the behaviour ships.
-6. Reply with the page URL and what changed.
+6. When you **create** a catalogued page (API endpoint, Decision, Idea, architecture or conventions page), append its title and id to both `.cursor/skills/confluence-docs/destinations.md` and `.claude/skills/confluence-docs/destinations.md` in the same change. Skip this for a Later bullet on an existing Decision.
+7. Reply with the page URL and what changed.
 
 If Confluence tools fail, paste the same points and say you could not write the wiki. Do not add a repo markdown substitute unless the user asks.
 
