@@ -5,6 +5,8 @@ import {
   LATITUDE_MIN,
   LONGITUDE_MAX,
   LONGITUDE_MIN,
+  PLACE_ID_MAX_LENGTH,
+  PLACE_ID_PATTERN,
   PLACE_SEARCH_MAX_LENGTH,
 } from './place.constants.js';
 
@@ -14,12 +16,34 @@ import {
 const coordinateSchema = (min: number, max: number) =>
   z.string().trim().min(1).transform(Number).pipe(z.number().min(min).max(max));
 
-const searchPlaceQuerySchema = z.object({
-  q: z.string().trim().min(1).max(PLACE_SEARCH_MAX_LENGTH),
+const coordinatesQuerySchema = z.object({
   lat: coordinateSchema(LATITUDE_MIN, LATITUDE_MAX),
   lng: coordinateSchema(LONGITUDE_MIN, LONGITUDE_MAX),
 });
 
+const searchPlaceQuerySchema = coordinatesQuerySchema.extend({
+  q: z.string().trim().min(1).max(PLACE_SEARCH_MAX_LENGTH),
+});
+
+const reversePlaceQuerySchema = coordinatesQuerySchema;
+
+const getPlaceDetailsParamsSchema = z.object({
+  placeId: z
+    .string()
+    .trim()
+    .min(1)
+    .max(PLACE_ID_MAX_LENGTH)
+    .regex(PLACE_ID_PATTERN),
+});
+
 export type SearchPlaceQuery = z.infer<typeof searchPlaceQuerySchema>;
 
-export { searchPlaceQuerySchema };
+export type ReversePlaceQuery = z.infer<typeof reversePlaceQuerySchema>;
+
+export type GetPlaceDetailsParams = z.infer<typeof getPlaceDetailsParamsSchema>;
+
+export {
+  searchPlaceQuerySchema,
+  reversePlaceQuerySchema,
+  getPlaceDetailsParamsSchema,
+};
