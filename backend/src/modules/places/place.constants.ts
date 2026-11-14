@@ -1,10 +1,5 @@
 export const PLACE_SEARCH_MAX_LENGTH = 200;
 
-export const LATITUDE_MIN = -90;
-export const LATITUDE_MAX = 90;
-export const LONGITUDE_MIN = -180;
-export const LONGITUDE_MAX = 180;
-
 export const PLACE_ID_MAX_LENGTH = 255;
 // Place IDs are URL-safe base64 text. The id is placed into a Google resource
 // path (`places/<id>`), so this also rejects `/` and other path characters.

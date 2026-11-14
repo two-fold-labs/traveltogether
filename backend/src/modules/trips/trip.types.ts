@@ -66,3 +66,17 @@ export type PublicTrip = {
 export type PublicTripList = {
   trips: PublicTrip[];
 };
+
+export type PublicTripInvite = {
+  tripId: string;
+  name: string;
+  arriveBy: Date | null;
+  hostName: string;
+  destination: PublicLocation;
+  alreadyJoined: boolean;
+};
+
+export type JoinTripResult = {
+  tripId: string;
+  joined: true;
+};
