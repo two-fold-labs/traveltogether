@@ -1,4 +1,8 @@
+import type { PublicLocation } from '#types/public-location.js';
+
 import { type TripStatus } from './trip.constants.js';
+
+export type { PublicLocation };
 
 export type TripRow = {
   id: string;
@@ -44,13 +48,6 @@ export type PublicParticipant = {
   userId: string;
   isOwner: boolean;
   joinedAt: Date;
-};
-
-export type PublicLocation = {
-  name: string;
-  address: string;
-  lat: number;
-  lng: number;
 };
 
 export type PublicTrip = {
