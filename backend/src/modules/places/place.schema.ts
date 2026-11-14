@@ -5,6 +5,9 @@ import {
   LATITUDE_MIN,
   LONGITUDE_MAX,
   LONGITUDE_MIN,
+} from '#constants/location.constants.js';
+
+import {
   PLACE_ID_MAX_LENGTH,
   PLACE_ID_PATTERN,
   PLACE_SEARCH_MAX_LENGTH,

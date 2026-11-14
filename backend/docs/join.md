@@ -12,9 +12,6 @@ Shipped on this branch:
 
 - `GET /places/details/:placeId` and `GET /places/reverse` ([places.md](places.md))
 - `GET /places/search` validates with zod (`422`, standard error envelope)
-
-Not shipped yet (still this backend task):
-
 - `GET /trips/join/:tripId` (invite preview)
 - `POST /trips/join/:tripId` (insert `trip_participants`)
 
@@ -36,7 +33,7 @@ Already true in `main` (TT-10 / TT-11 text is stale):
 ## Source location
 
 ```ts
-// POST /trips/join/:tripId  body (planned)
+// POST /trips/join/:tripId  body
 {
   sourceLocation: {
     name: string; // trimmed, 1..255
@@ -56,7 +53,7 @@ How the client fills it:
 
 The join POST trusts those four fields after zod bounds. A client can change the name between lookup and join. Accepted: today a source label is shown only to its owner, and names never feed calculations. Close this before group views show another user's source label (signed lookup token, or re-fetch by `placeId` on join).
 
-## Invite preview (planned)
+## Invite preview
 
 `GET /trips/join/:tripId` (guest session enough; membership not required) → `200`
 
@@ -96,7 +93,8 @@ Update in one pass so the tickets and wiki do not churn with each commit:
 - **create** API · Place details (`GET /places/details/:placeId`)
 - **create** API · Reverse geocode (`GET /places/reverse`)
 - **update** API · Search places (zod `422`, no hand-built `400`)
-- **create** API · Invite preview and Join trip — only once those routes exist
+- **create** API · Invite preview (`GET /trips/join/:tripId`)
+- **create** API · Join trip (`POST /trips/join/:tripId`)
 - **update** Database design · `locations.name` / `address` are labels
 - **update** Backend architecture · `integrations/google/geocoding`, shared `GOOGLE_API_TIMEOUT_MS`
 - **update** Backend conventions · `places/` follows the same rules as `auth/` / `trips/`
