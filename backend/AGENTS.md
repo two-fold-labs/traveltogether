@@ -46,6 +46,8 @@ Prompt with the points discussed. Never create or edit Confluence without the us
 | Writing controller/service code, naming, zod usage                  | [docs/conventions.md](docs/conventions.md)           |
 | Writing SQL, a repository, a migration, or a row type               | [docs/database.md](docs/database.md)                 |
 | Touching login, guests, JWT, cookies, or the current user           | [docs/auth.md](docs/auth.md)                         |
+| Adding a Places endpoint, calling Google, or resolving a location   | [docs/places.md](docs/places.md)                     |
+| Working on invite preview, join-by-code, or a joiner's source       | [docs/join.md](docs/join.md)                         |
 | Editing `AGENTS.md` or anything in `docs/`                          | [docs/maintaining-docs.md](docs/maintaining-docs.md) |
 
-Reference implementation for structure: `src/modules/auth/`. `src/modules/trips/` and `src/modules/places/` predate these rules (manual validation, relative imports, `models/` folder); don't copy their patterns.
+Reference implementation for structure: `src/modules/auth/`. Every module follows these rules; the only legacy leftovers are the module-specific files in `src/types/` (see [docs/architecture.md](docs/architecture.md#layout)).

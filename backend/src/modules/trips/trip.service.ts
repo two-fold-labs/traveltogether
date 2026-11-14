@@ -10,10 +10,13 @@ import {
   TRIP_ID_PREFIX,
   TRIP_ID_SUFFIX_LENGTH,
 } from './trip.constants.js';
-import { mapTrip } from './trip.mapper.js';
+import { mapTrip, mapTripInvite } from './trip.mapper.js';
 import * as tripRepository from './trip.repository.js';
+import type { JoinTripBody } from './trip.schema.js';
 import type {
+  JoinTripResult,
   PublicTrip,
+  PublicTripInvite,
   PublicTripList,
   TripParticipantRow,
 } from './trip.types.js';
@@ -62,6 +65,10 @@ const createTrip = async (
           isOwner: true,
           sourceLocationId: location.id,
         });
+
+        if (!participant) {
+          throw new Error('Failed to insert trip participant');
+        }
 
         return { trip, location, participant };
       }
@@ -142,4 +149,77 @@ const generateTripId = () => {
   return `${TRIP_ID_PREFIX}${suffix}`;
 };
 
-export { createTrip, getTrip, getTrips };
+const getTripInvite = async (
+  userId: string,
+  tripId: string,
+): Promise<PublicTripInvite> => {
+  const invite = await tripRepository.findTripInviteByTripId(tripId);
+
+  if (!invite) {
+    throw new NotFoundError('Trip not found.');
+  }
+
+  const participant =
+    await tripRepository.findTripParticipantByTripRowIdAndUserId(
+      invite.trip.id,
+      userId,
+    );
+
+  return mapTripInvite(
+    invite.trip,
+    invite.location,
+    invite.hostName,
+    participant !== undefined,
+  );
+};
+
+const joinTrip = async (
+  userId: string,
+  tripId: string,
+  sourceLocation: JoinTripBody['sourceLocation'],
+): Promise<JoinTripResult & { created: boolean }> => {
+  const tripWithDestination =
+    await tripRepository.findTripWithDestinationByTripId(tripId);
+
+  if (!tripWithDestination) {
+    throw new NotFoundError('Trip not found.');
+  }
+
+  const publicTripId = tripWithDestination.trip.trip_id;
+
+  return withTransaction(async () => {
+    const existing =
+      await tripRepository.findTripParticipantByTripRowIdAndUserId(
+        tripWithDestination.trip.id,
+        userId,
+      );
+
+    if (existing) {
+      return { tripId: publicTripId, joined: true as const, created: false };
+    }
+
+    const location = await tripRepository.insertLocation({
+      name: sourceLocation.name,
+      address: sourceLocation.address,
+      lat: sourceLocation.lat,
+      lng: sourceLocation.lng,
+    });
+
+    const participant = await tripRepository.insertTripParticipant({
+      tripRowId: tripWithDestination.trip.id,
+      userId,
+      isOwner: false,
+      sourceLocationId: location.id,
+    });
+
+    // A concurrent join can win the unique constraint. The locations row
+    // inserted above is then unused; harmless.
+    if (!participant) {
+      return { tripId: publicTripId, joined: true as const, created: false };
+    }
+
+    return { tripId: publicTripId, joined: true as const, created: true };
+  });
+};
+
+export { createTrip, getTrip, getTripInvite, getTrips, joinTrip };

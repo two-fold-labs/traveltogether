@@ -45,4 +45,8 @@ Update the row type in the same change as the migration.
 - A permanent user must have both email and password hash; a guest has neither (CHECK on `users`). Upgrading a guest means filling both on the same row.
 - Email uniqueness is case-insensitive.
 
+## `locations` labels vs coordinates
+
+`name` and `address` are display labels. Any calculation (distance, route, "same point") uses `latitude` / `longitude`. Do not parse or geocode a name to recover a point; the columns are the point.
+
 Everything else about table shape: read `migrations/`.

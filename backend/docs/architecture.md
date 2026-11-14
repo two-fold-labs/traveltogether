@@ -11,7 +11,7 @@ src/
 ├── config/              # env.ts, db.ts
 ├── constants/           # constants shared by 2+ modules
 ├── errors/              # AppError + subclasses, error codes, error types
-├── integrations/        # third-party API clients + mappers (google/places)
+├── integrations/        # third-party API clients + mappers (google/places, google/geocoding, google.constants.ts)
 ├── middlewares/         # shared Express middlewares (errorHandler)
 ├── shared/utils/        # pure helpers used by 2+ modules
 ├── types/               # types shared by 2+ modules
@@ -30,7 +30,7 @@ Naming: the folder is the plural resource name (`trips/`, `places/`); the file p
 
 Create a file only when it has content. A small module may skip `schema`, `types`, `mapper` or `constants`; never create empty placeholders or pass-through layers.
 
-Legacy, don't add to these: `src/models/` (row types now live in `<entity>.types.ts`) and the module-specific files in `src/types/` (`location.types.ts`, `place.types.ts`).
+Legacy, don't add to these: the module-specific files in `src/types/` (`location.types.ts`, `place.types.ts`). Row types live in `<entity>.types.ts`.
 
 ## Layers
 
