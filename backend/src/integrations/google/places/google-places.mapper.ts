@@ -42,21 +42,24 @@ export function mapAutocompleteResponse(
   return { places };
 }
 
-export function mapPlaceDetails(place: IPlace): PlaceDetails | null {
+export function mapPlaceDetails(place: IPlace): PlaceDetails {
   const id = place.id;
   const name = place.displayName?.text;
   const address = place.formattedAddress;
   const location = place.location;
+  const lat = location?.latitude;
+  const lng = location?.longitude;
 
-  if (!id || !name || !address || !location) {
-    return null;
-  }
-
-  const lat = location.latitude;
-  const lng = location.longitude;
-
-  if (typeof lat !== 'number' || typeof lng !== 'number') {
-    return null;
+  if (
+    !id ||
+    !name ||
+    !address ||
+    typeof lat !== 'number' ||
+    typeof lng !== 'number'
+  ) {
+    throw new Error(
+      'Google Place details response is missing required fields.',
+    );
   }
 
   return { id, name, address, lat, lng };
