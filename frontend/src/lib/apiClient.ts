@@ -4,6 +4,9 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const NO_CONTENT_STATUS = 204;
 const INVALID_RESPONSE_CODE = 'INVALID_RESPONSE';
+const NETWORK_ERROR_CODE = 'NETWORK_ERROR';
+// No HTTP response was received, so there is no real status
+const NO_RESPONSE_STATUS = 0;
 
 interface RequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -26,17 +29,45 @@ const parseBody = async (res: Response): Promise<unknown> => {
   }
 };
 
+// fetch rejects only when no response arrives (offline, DNS, CORS) or on abort.
+// A cancelled request is not a failure, and TanStack Query expects the
+// original AbortError, so aborts must not become ApiError
+const sendRequest = async (
+  url: string,
+  init: RequestInit,
+  signal: AbortSignal | undefined,
+): Promise<Response> => {
+  try {
+    return await fetch(url, { ...init, signal });
+  } catch (error) {
+    if (signal?.aborted) {
+      throw error;
+    }
+
+    throw new ApiError({
+      status: NO_RESPONSE_STATUS,
+      code: NETWORK_ERROR_CODE,
+      message: 'Could not reach the server. Check your connection.',
+    });
+  }
+};
+
+// Every failure that leaves this function is an ApiError (except aborts),
+// which is what the TanStack Query `defaultError` registration relies on
 const request = async <T>(
   path: string,
   { method = 'GET', body, signal }: RequestOptions = {},
 ): Promise<T> => {
-  const res = await fetch(`${API_BASE_URL}${path}`, {
-    method,
+  const res = await sendRequest(
+    `${API_BASE_URL}${path}`,
+    {
+      method,
+      headers:
+        body === undefined ? undefined : { 'Content-Type': 'application/json' },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    },
     signal,
-    headers:
-      body === undefined ? undefined : { 'Content-Type': 'application/json' },
-    body: body === undefined ? undefined : JSON.stringify(body),
-  });
+  );
 
   if (res.status === NO_CONTENT_STATUS) {
     return undefined as T;

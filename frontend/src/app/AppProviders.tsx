@@ -1,17 +1,17 @@
 import GlobalStyles from '@mui/material/GlobalStyles';
 import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { APIProvider } from '@vis.gl/react-google-maps';
 
+import { queryClient } from './queryClient';
 import theme from '../theme/theme';
+
 
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 interface AppProvidersProps {
   children: React.ReactNode;
 }
-
-const queryClient = new QueryClient();
 
 const AppProviders = ({ children }: AppProvidersProps) => {
   return (
