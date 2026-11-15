@@ -45,9 +45,10 @@ Cursor reads **`.cursor/mcp.json`**. Root **`.mcp.json`** is the portable copy (
 
 ## Read the matching doc before starting
 
-| When you are…                                                                                 | Read                                       |
-| --------------------------------------------------------------------------------------------- | ------------------------------------------ |
-| Building or restyling a component, responsive or dark-mode behavior                           | [docs/styling.md](docs/styling.md)         |
-| Changing colors, typography, theme overrides, `index.css`, or unsure which color class to use | [docs/theme.md](docs/theme.md)             |
-| Creating or moving files, or adding cross-folder imports                                      | [docs/structure.md](docs/structure.md)     |
-| Writing a new component, hook, util, or env variable                                          | [docs/conventions.md](docs/conventions.md) |
+| When you are…                                                                                 | Read                                           |
+| --------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| Building or restyling a component, responsive or dark-mode behavior                           | [docs/styling.md](docs/styling.md)             |
+| Changing colors, typography, theme overrides, `index.css`, or unsure which color class to use | [docs/theme.md](docs/theme.md)                 |
+| Creating or moving files, or adding cross-folder imports                                      | [docs/structure.md](docs/structure.md)         |
+| Writing a new component, hook, util, or env variable                                          | [docs/conventions.md](docs/conventions.md)     |
+| Fetching or changing server data, query keys, mutations, API errors                           | [docs/data-fetching.md](docs/data-fetching.md) |
