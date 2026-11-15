@@ -6,6 +6,7 @@ import { Icon } from '@/components/ui/Icon';
 import { formatDateTime, formatRelativeTime } from '@/lib/formatDate';
 
 import { type TripCardData } from '../types';
+import TripRouteStats from './TripRouteStats';
 
 interface TripCardProps {
   trip: TripCardData;
@@ -70,6 +71,8 @@ const TripCard = ({ trip, onView, onEdit }: TripCardProps) => {
           {formatDateTime(trip.arriveBy) || 'No arrival time'}
         </Typography>
       </Stack>
+
+      <TripRouteStats route={trip.route} />
 
       <Stack direction="row" spacing={2}>
         <Button

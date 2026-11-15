@@ -23,6 +23,7 @@ export const mockUpcomingTrips: TripCardData[] = [
     arriveBy: inHours(72),
     status: 'created',
     isOwner: false,
+    route: { distanceMeters: 304_000, durationSeconds: 12_600, stopCount: 2 },
   },
   {
     tripId: 'mock-2',
@@ -31,6 +32,8 @@ export const mockUpcomingTrips: TripCardData[] = [
     arriveBy: inHours(24 * 10),
     status: 'created',
     isOwner: true,
+    // partly known: shows "--" for the missing values
+    route: { distanceMeters: 245_500, durationSeconds: null, stopCount: 0 },
   },
   {
     tripId: 'mock-3',
@@ -39,5 +42,6 @@ export const mockUpcomingTrips: TripCardData[] = [
     arriveBy: inHours(24 * 21),
     status: 'created',
     isOwner: true,
+    // no route yet: all three show "--"
   },
 ];

@@ -53,7 +53,7 @@ interface TripDestination {
   lng: number;
 }
 
-export interface CreateTripResponse {
+export interface Trip {
   tripId: string;
   name: string;
   arriveBy: string | null;
@@ -63,8 +63,20 @@ export interface CreateTripResponse {
   participants: TripParticipant[];
 }
 
+export interface GetTripsResponse {
+  trips: Trip[];
+}
+
 // What a trip card needs. Map each API trip to this shape before rendering,
 // so the card does not depend on the full API response.
+// The current user's planned route: from their start location to the
+// destination. Raw values; formatting happens in the UI. null = not known yet.
+export interface TripRouteSummary {
+  distanceMeters: number | null;
+  durationSeconds: number | null;
+  stopCount: number | null; // stops on the way; the destination is not counted
+}
+
 export interface TripCardData {
   tripId: string;
   name: string;
@@ -72,4 +84,5 @@ export interface TripCardData {
   arriveBy: string | null;
   status: TripStatus;
   isOwner: boolean;
+  route?: TripRouteSummary; // not returned by the API yet
 }
