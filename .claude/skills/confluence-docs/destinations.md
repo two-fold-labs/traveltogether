@@ -29,13 +29,13 @@ Keep the Cursor and Claude copies identical (`.cursor/skills/confluence-docs/` a
 | [Participant journey state](https://two-fold-labs.atlassian.net/wiki/spaces/TTP/pages/4259841/Participant+journey+state) | `4259841` | Journey vs trip clocks |
 | [Exit a trip](https://two-fold-labs.atlassian.net/wiki/spaces/TTP/pages/4882433/Exit+a+trip) | `4882433` | Leave trip, derived Active |
 | [System architecture](https://two-fold-labs.atlassian.net/wiki/spaces/TTP/pages/2981889/System+architecture) | `2981889` | Containers, request path, hosting |
-| [Frontend architecture](https://two-fold-labs.atlassian.net/wiki/spaces/TTP/pages/3047443/Frontend+architecture) | `3047443` | React app structure |
-| [Backend architecture](https://two-fold-labs.atlassian.net/wiki/spaces/TTP/pages/3080193/Backend+architecture) | `3080193` | Express app structure, auth as-built |
-| [Database design](https://two-fold-labs.atlassian.net/wiki/spaces/TTP/pages/3014657/Database+design) | `3014657` | Schema / migrations |
+| [Frontend architecture](https://two-fold-labs.atlassian.net/wiki/spaces/TTP/pages/3047443/Frontend+architecture) | `3047443` | Why the React app is shaped this way (not a file tour) |
+| [Backend architecture](https://two-fold-labs.atlassian.net/wiki/spaces/TTP/pages/3080193/Backend+architecture) | `3080193` | Why the Express app and auth are shaped this way (not a file tour) |
+| [Database design](https://two-fold-labs.atlassian.net/wiki/spaces/TTP/pages/3014657/Database+design) | `3014657` | A table or relationship changed in meaning for the product (not SQL detail) |
 | [Contract](https://two-fold-labs.atlassian.net/wiki/spaces/TTP/pages/3047426/Contract) | `3047426` | Cookie, error envelope, status codes |
-| [Frontend conventions](https://two-fold-labs.atlassian.net/wiki/spaces/TTP/pages/3014674/Frontend+conventions) | `3014674` | Why we chose the frontend shape (not a mirror of AGENTS.md) |
-| [Backend conventions](https://two-fold-labs.atlassian.net/wiki/spaces/TTP/pages/3112961/Backend+conventions) | `3112961` | Why we chose the backend shape (not a mirror of AGENTS.md) |
-| [GitHub Actions](https://two-fold-labs.atlassian.net/wiki/spaces/TTP/pages/5996546/GitHub+Actions) | `5996546` | Why we run CI, auto-format, Cursor review, and Claude on PRs |
+| [Frontend conventions](https://two-fold-labs.atlassian.net/wiki/spaces/TTP/pages/3014674/Frontend+conventions) | `3014674` | A frontend stack or build choice changed, or its reasoning did (never to mirror `frontend/AGENTS.md`) |
+| [Backend conventions](https://two-fold-labs.atlassian.net/wiki/spaces/TTP/pages/3112961/Backend+conventions) | `3112961` | A backend stack or build choice changed, or its reasoning did (never to mirror `backend/AGENTS.md`) |
+| [GitHub Actions](https://two-fold-labs.atlassian.net/wiki/spaces/TTP/pages/5996546/GitHub+Actions) | `5996546` | CI, auto-format, Cursor review, or Claude-on-PR setup changed, or why we run them did |
 
 API endpoint pages (create a new sibling when adding a route): Health `2949138`, Guest login `2785286`, Search places `3309569`, Create trip `2556071`, List trips `3342337`, Get trip `3375105`. Contract stays last in the folder.
 
@@ -47,5 +47,5 @@ API endpoint pages (create a new sibling when adding a route): Health `2949138`,
 - Lead with why / use-case / thinking. Do not paste AGENTS.md, import order, or handler templates.
 - Decision pages: state **Not shipped** vs shipped in the intro. Keep a **Later (not decided)** section for holes of that story.
 - Idea pages: problem / wish, options if any, explicit “not committed”.
-- API: title is the feature name only; purpose first, then caller contract (path, field meaning, status codes). Curl is optional as a demo of that contract.
+- API: title is the feature name only; purpose first, then the caller contract: path, typed request headers/body, status codes, and sample responses (required). Curl is optional as a demo.
 - Diagrams: ASCII in a text/`pre` fence (Remix/AI diagrams are off on this site).

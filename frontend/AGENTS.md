@@ -30,7 +30,7 @@ Never create a ticket without the user's confirmation.
 Offer to create or update the team wiki (space TTP) with the `confluence-docs` skill (`.cursor/skills/confluence-docs/`, same files in `.claude/skills/confluence-docs/` for Claude Code) when:
 
 - a product decision or idea was discussed, or
-- as-built behaviour, architecture, database, API, or an engineering convention changed.
+- as-built behaviour, architecture, database, API, or how we build (CI, review, hosting, a stack choice) changed. Why and use-case, not a copy of these rules.
 
 Prompt with the points discussed. Never create or edit Confluence without the user's confirmation.
 

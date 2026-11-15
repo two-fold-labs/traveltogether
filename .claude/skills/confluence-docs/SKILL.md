@@ -126,7 +126,7 @@ Only after confirmation (and after interview answers, if you asked).
 1. Read [destinations.md](destinations.md). Fetch the latest page (`snapshotToken`) before editing.
 2. Search TTP for an existing page. Prefer update over a second page on the same topic.
 3. Classic pages, `contentWidth` wide. No Live Docs. ASCII diagrams in `pre` / text fences.
-4. Match the page you are changing: Decision pages stay “Not shipped” until the code exists and lead with why; API pages state purpose then the caller contract (path, meaning of fields, status codes). Curl is optional as a demonstration of that contract, not a coding lesson. Titles have no path. Do not paste handler code or AGENTS.md.
+4. Match the page you are changing: Decision pages stay “Not shipped” until the code exists and lead with why; API pages state purpose then the caller contract (path, typed request headers/body, meaning of fields, status codes, sample responses). Curl is optional as a demonstration of that contract, not a coding lesson. Titles have no path. Do not paste handler code or AGENTS.md.
 5. Link Related pages. Overview “Not built yet” should point at new Decisions; remove that line when the behaviour ships.
 6. When you **create** a catalogued page (API endpoint, Decision, Idea, architecture or conventions page), append its title and id to both `.cursor/skills/confluence-docs/` and `.claude/skills/confluence-docs/` `destinations.md` in the same change. Skip this for a Later bullet on an existing Decision.
 7. Reply with the page URL and what changed.
