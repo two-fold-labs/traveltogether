@@ -149,9 +149,14 @@ vite.config.ts.timestamp-*
 # Playwright MCP output
 .playwright-mcp/
 
-# Local Cursor files. Shared project MCP is `.cursor/mcp.json` (and root `.mcp.json`).
+# Local Cursor files. Shared: `.cursor/mcp.json`, project skills, and tracked rules.
 .cursor/*
 !.cursor/mcp.json
+!.cursor/skills/
+!.cursor/skills/**
+!.cursor/rules/
+.cursor/rules/*
+!.cursor/rules/confluence-docs.mdc
 
 plans/
 
