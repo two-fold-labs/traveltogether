@@ -22,12 +22,21 @@ Commands (from `backend/`): `npm run dev` · `npm run typecheck` · `npm run lin
 
 ## Deferred work → Jira
 
-Offer to log a Jira ticket (project `TT`) with the `jira-ticket` skill (`.claude/skills/jira-ticket/`) when:
+Offer to log a Jira ticket (project `TT`) with the `jira-ticket` skill (`.cursor/skills/jira-ticket/`, same files in `.claude/skills/jira-ticket/` for Claude Code) when:
 
 - a story, task, bug, improvement or idea comes up that we won't do now, or
 - part of the current task is left unfinished: split the leftover into its own ticket so the main feature can ship in a working state for the user.
 
 Never create a ticket without the user's confirmation.
+
+## Doc-worthy discussion → Confluence
+
+Offer to create or update the team wiki (space TTP) with the `confluence-docs` skill (`.cursor/skills/confluence-docs/`, same files in `.claude/skills/confluence-docs/` for Claude Code) when:
+
+- a product decision or idea was discussed, or
+- as-built behaviour, architecture, database, API, or an engineering convention changed.
+
+Prompt with the points discussed. Never create or edit Confluence without the user's confirmation.
 
 ## Read the matching doc before starting
 
