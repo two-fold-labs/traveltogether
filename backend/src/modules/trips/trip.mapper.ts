@@ -54,6 +54,7 @@ export function mapTripInvite(
     tripId: trip.trip_id,
     name: trip.name,
     arriveBy: trip.arrive_by,
+    status: trip.status,
     hostName,
     destination: mapLocation(location),
     alreadyJoined,

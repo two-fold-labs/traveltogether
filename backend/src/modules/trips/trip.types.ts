@@ -66,6 +66,7 @@ export type PublicTripInvite = {
   tripId: string;
   name: string;
   arriveBy: Date | null;
+  status: TripStatus;
   hostName: string;
   destination: PublicLocation;
   alreadyJoined: boolean;
@@ -73,5 +74,4 @@ export type PublicTripInvite = {
 
 export type JoinTripResult = {
   tripId: string;
-  joined: true;
 };
