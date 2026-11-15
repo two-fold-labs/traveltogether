@@ -87,17 +87,14 @@ const insertTripParticipant = async ({
   const text = `INSERT INTO trip_participants (
                   trip_id, user_id, is_owner, source_location_id)
                 VALUES ($1, $2, $3, $4)
+                ON CONFLICT (trip_id, user_id) DO NOTHING
                 RETURNING id, trip_id, user_id, is_owner, joined_at, source_location_id`;
   const values = [tripRowId, userId, isOwner, sourceLocationId];
 
   const result = await db.query<TripParticipantRow>(text, values);
-  const tripParticipant = result.rows[0];
 
-  if (!tripParticipant) {
-    throw new Error('Failed to insert trip participant');
-  }
-
-  return tripParticipant;
+  // undefined means this user is already on the trip.
+  return result.rows[0];
 };
 
 const toTripWithLocation = (row: TripWithDestinationRow) => {
@@ -150,6 +147,62 @@ const findTripWithDestinationByTripId = async (tripId: string) => {
   }
 
   return toTripWithLocation(row);
+};
+
+type TripInviteRow = TripWithDestinationRow & {
+  host_name: string | null;
+};
+
+const findTripInviteByTripId = async (tripId: string) => {
+  const db = getDb();
+
+  const result = await db.query<TripInviteRow>(
+    `SELECT
+       t.id, t.trip_id, t.name, t.arrive_by, t.status, t.created_at,
+       t.started_at, t.ended_at, t.destination_location_id, t.created_by,
+       l.id AS location_id,
+       l.name AS location_name,
+       l.address AS location_address,
+       l.latitude AS location_latitude,
+       l.longitude AS location_longitude,
+       u.name AS host_name
+     FROM trips t
+     INNER JOIN locations l ON l.id = t.destination_location_id
+     LEFT JOIN LATERAL (
+       SELECT user_id
+       FROM trip_participants
+       WHERE trip_id = t.id AND is_owner = true
+       ORDER BY joined_at, id
+       LIMIT 1
+     ) owner ON true
+     LEFT JOIN users u ON u.id = owner.user_id
+     WHERE t.trip_id = $1`,
+    [tripId],
+  );
+
+  const row = result.rows[0];
+
+  if (!row) {
+    return undefined;
+  }
+
+  return { ...toTripWithLocation(row), hostName: row.host_name ?? '' };
+};
+
+const findTripParticipantByTripRowIdAndUserId = async (
+  tripRowId: string,
+  userId: string,
+) => {
+  const db = getDb();
+  const result = await db.query<TripParticipantRow>(
+    `SELECT
+       id, trip_id, user_id, is_owner, joined_at, source_location_id
+     FROM trip_participants
+     WHERE trip_id = $1 AND user_id = $2`,
+    [tripRowId, userId],
+  );
+
+  return result.rows[0];
 };
 
 const findTripParticipantsByTripRowId = async (tripRowId: string) => {
@@ -206,6 +259,8 @@ export {
   insertTrip,
   insertTripParticipant,
   findTripWithDestinationByTripId,
+  findTripInviteByTripId,
+  findTripParticipantByTripRowIdAndUserId,
   findTripParticipantsByTripRowId,
   findTripParticipantsByTripRowIds,
   findTripsWithDestinationByUserId,
