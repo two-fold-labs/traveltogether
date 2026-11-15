@@ -1,5 +1,6 @@
 import { type IconName } from '@/components/ui/Icon';
 
+// Backend: PlaceSuggestion
 export interface PlaceSuggestion {
   id: string;
   name: string;
@@ -7,6 +8,7 @@ export interface PlaceSuggestion {
   distanceMeters?: number;
 }
 
+// Backend: PlaceSearchResponse
 export interface PlaceSearchResponse {
   places: PlaceSuggestion[];
 }
@@ -29,14 +31,17 @@ export interface CreateTripValues {
 
 export type CreateTripErrors = Partial<Record<keyof CreateTripValues, string>>;
 
+// Backend: CreateTripBody
 export interface CreateTripRequest {
   name: string;
   arriveBy: string;
   destinationPlaceId: string;
 }
 
+// Backend: TripStatus
 export type TripStatus = 'created' | 'started' | 'ended';
 
+// Backend: PublicParticipant
 interface TripParticipant {
   id: string;
   tripId: string;
@@ -45,6 +50,7 @@ interface TripParticipant {
   joinedAt: string;
 }
 
+// Backend: PublicLocation
 // The name can be TripLocation based on future usecase.
 interface TripDestination {
   name: string;
@@ -53,6 +59,7 @@ interface TripDestination {
   lng: number;
 }
 
+// Backend: PublicTrip
 export interface Trip {
   tripId: string;
   name: string;
@@ -63,6 +70,7 @@ export interface Trip {
   participants: TripParticipant[];
 }
 
+// Backend: PublicTripList
 export interface GetTripsResponse {
   trips: Trip[];
 }
