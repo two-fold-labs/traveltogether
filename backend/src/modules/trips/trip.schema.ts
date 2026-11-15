@@ -8,6 +8,10 @@ import {
   LONGITUDE_MAX,
   LONGITUDE_MIN,
 } from '#constants/location.constants.js';
+import {
+  PLACE_ID_MAX_LENGTH,
+  PLACE_ID_PATTERN,
+} from '#constants/place.constants.js';
 
 const createTripSchema = z
   .object({
@@ -16,7 +20,12 @@ const createTripSchema = z
       .trim()
       .min(2, 'Name must be at least 2 characters')
       .max(100, 'Name must be at most 100 characters'),
-    destinationPlaceId: z.string().trim().min(1),
+    destinationPlaceId: z
+      .string()
+      .trim()
+      .min(1)
+      .max(PLACE_ID_MAX_LENGTH)
+      .regex(PLACE_ID_PATTERN),
     arriveBy: z.coerce.date(),
   })
   .refine((data) => data.arriveBy > new Date(), {

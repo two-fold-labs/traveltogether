@@ -6,12 +6,12 @@ import {
   LONGITUDE_MAX,
   LONGITUDE_MIN,
 } from '#constants/location.constants.js';
-
 import {
   PLACE_ID_MAX_LENGTH,
   PLACE_ID_PATTERN,
-  PLACE_SEARCH_MAX_LENGTH,
-} from './place.constants.js';
+} from '#constants/place.constants.js';
+
+import { PLACE_SEARCH_MAX_LENGTH } from './place.constants.js';
 
 // Query params are strings. The non-empty check comes first because
 // Number('') is 0, which would pass as a valid coordinate. z.number() already

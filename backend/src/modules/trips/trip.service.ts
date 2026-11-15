@@ -1,18 +1,23 @@
 import { randomInt } from 'node:crypto';
 
 import { withTransaction } from '#config/db.js';
-import { NotFoundError, ValidationError } from '#errors/app-error.js';
+import {
+  ConflictError,
+  NotFoundError,
+  ValidationError,
+} from '#errors/app-error.js';
 import { googlePlacesClient } from '#integrations/google/places/google-places.client.js';
+import type { PublicLocation } from '#types/public-location.js';
 
 import {
   TRIP_ID_ALPHABET,
   TRIP_ID_MAX_ATTEMPTS,
   TRIP_ID_PREFIX,
   TRIP_ID_SUFFIX_LENGTH,
+  TRIP_STATUS,
 } from './trip.constants.js';
 import { mapTrip, mapTripInvite } from './trip.mapper.js';
 import * as tripRepository from './trip.repository.js';
-import type { JoinTripBody } from './trip.schema.js';
 import type {
   JoinTripResult,
   PublicTrip,
@@ -176,7 +181,7 @@ const getTripInvite = async (
 const joinTrip = async (
   userId: string,
   tripId: string,
-  sourceLocation: JoinTripBody['sourceLocation'],
+  sourceLocation: PublicLocation,
 ): Promise<JoinTripResult & { created: boolean }> => {
   const tripWithDestination =
     await tripRepository.findTripWithDestinationByTripId(tripId);
@@ -196,6 +201,10 @@ const joinTrip = async (
 
     if (existing) {
       return { tripId: publicTripId, joined: true as const, created: false };
+    }
+
+    if (tripWithDestination.trip.status === TRIP_STATUS.ENDED) {
+      throw new ConflictError('This trip has ended.');
     }
 
     const location = await tripRepository.insertLocation({

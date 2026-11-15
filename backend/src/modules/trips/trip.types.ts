@@ -2,8 +2,6 @@ import type { PublicLocation } from '#types/public-location.js';
 
 import { type TripStatus } from './trip.constants.js';
 
-export type { PublicLocation };
-
 export type TripRow = {
   id: string;
   trip_id: string;
