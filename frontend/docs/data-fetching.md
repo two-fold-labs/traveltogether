@@ -6,6 +6,7 @@ Read this when reading or changing server data, or adding a query key. Stack: Ta
 
 - API calls live in the feature's `api.ts`. Components never call `api.ts` directly.
 - Each query or mutation gets its own hook file in `features/<name>/hooks/`.
+- Each API request or response type in `types.ts` starts with `// Backend: <TypeName>` (or `unnamed, built in <module/file>` when the backend has no type). UI-only types get no such comment.
 - In components and hooks, get the client with `useQueryClient()`. Import the `queryClient` instance only from `app/`.
 
 ## Hook names

@@ -1,5 +1,7 @@
 import { type IconName } from '@/components/ui/Icon';
 
+// TODO(TT-20): replace hand-written API types with ones generated from the OpenAPI spec
+
 // Backend: PlaceSuggestion
 export interface PlaceSuggestion {
   id: string;

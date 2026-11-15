@@ -1,3 +1,4 @@
+// TODO(TT-20): replace hand-written API types with ones generated from the OpenAPI spec
 // Backend: PublicUser
 interface User {
   id: string;
