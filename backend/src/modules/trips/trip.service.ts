@@ -200,9 +200,11 @@ const joinTrip = async (
       );
 
     if (existing) {
-      return { tripId: publicTripId, joined: true as const, created: false };
+      return { tripId: publicTripId, created: false };
     }
 
+    // Status is from the read before this transaction. Re-fetch and lock the
+    // trip row here when end-trip can run concurrently with join.
     if (tripWithDestination.trip.status === TRIP_STATUS.ENDED) {
       throw new ConflictError('This trip has ended.');
     }
@@ -224,10 +226,10 @@ const joinTrip = async (
     // A concurrent join can win the unique constraint. The locations row
     // inserted above is then unused; harmless.
     if (!participant) {
-      return { tripId: publicTripId, joined: true as const, created: false };
+      return { tripId: publicTripId, created: false };
     }
 
-    return { tripId: publicTripId, joined: true as const, created: true };
+    return { tripId: publicTripId, created: true };
   });
 };
 

@@ -76,7 +76,6 @@ const joinTrip: RequestHandler = async (req, res, next) => {
 
     res.status(result.created ? 201 : 200).json({
       tripId: result.tripId,
-      joined: result.joined,
     });
   } catch (error) {
     next(error);
