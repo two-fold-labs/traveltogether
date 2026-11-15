@@ -5,7 +5,7 @@ import { authKeys } from '../queryKeys';
 
 const useSession = () => {
   const queryResult = useQuery({
-    queryKey: authKeys.session,
+    queryKey: authKeys.session(),
     queryFn: guestLogin,
     staleTime: Infinity,
     refetchOnWindowFocus: false,

@@ -2,28 +2,39 @@ import { request } from '@/lib/apiClient';
 
 import type {
   CreateTripRequest,
-  CreateTripResponse,
+  GetTripsResponse,
   PlaceSearchResponse,
+  Trip,
 } from './types';
 
-const searchPlaces = async (searchText: string, lat: string, lng: string) => {
+const searchPlaces = async (
+  searchText: string,
+  lat: string,
+  lng: string,
+  signal?: AbortSignal,
+) => {
   const params = new URLSearchParams({ q: searchText, lat, lng });
   const path = `/places/search?${params.toString()}`;
 
   const response = await request<PlaceSearchResponse>(path, {
     method: 'GET',
+    signal,
   });
 
   return response.places;
 };
 
 const createTrip = async (requestBody: CreateTripRequest) => {
-  const response = await request<CreateTripResponse>('/trips', {
+  return request<Trip>('/trips', {
     method: 'POST',
     body: requestBody,
   });
-
-  return response;
 };
 
-export { searchPlaces, createTrip };
+const getTrips = async () => {
+  return request<GetTripsResponse>('/trips', {
+    method: 'GET',
+  });
+};
+
+export { searchPlaces, createTrip, getTrips };

@@ -5,6 +5,8 @@ import { tripKeys } from '../queryKeys';
 import type { PlaceSuggestion } from '../types';
 
 const MIN_SEARCH_LENGTH = 3;
+// Places barely change, so reuse results for repeat searches in one session
+const PLACE_SEARCH_STALE_TIME_MS = 5 * 60 * 1000;
 const NO_PLACES: PlaceSuggestion[] = [];
 
 const usePlaceSearch = (searchText: string, lat: string, lng: string) => {
@@ -12,11 +14,11 @@ const usePlaceSearch = (searchText: string, lat: string, lng: string) => {
 
   const { data, isFetching } = useQuery({
     queryKey: tripKeys.searchPlaces(searchText, lat, lng),
-    queryFn: () => searchPlaces(searchText, lat, lng),
+    queryFn: ({ signal }) => searchPlaces(searchText, lat, lng, signal),
     enabled,
     placeholderData: keepPreviousData,
     retry: false,
-    staleTime: 5 * 60 * 1000,
+    staleTime: PLACE_SEARCH_STALE_TIME_MS,
   });
 
   // keepPreviousData keeps the last results once the query is disabled,
