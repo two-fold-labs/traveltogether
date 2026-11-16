@@ -70,7 +70,7 @@ Prompt at the first natural pause after the points exist: end of a brainstorm, a
 - What an endpoint is **for**, who calls it, or why its contract looks like that (API)
 - How we **build** changed (CI, review, Claude, hosting, a stack choice) — the thinking, not the YAML
 
-**Do not prompt for:** a routine lint/format fix, tests that do not change a contract, comments, explaining existing code with no new rule, republishing AGENTS.md, or when the user already said skip docs this session.
+**Do not prompt for:** a routine lint/format fix, tests that do not change a contract, comments, explaining existing code with no new rule, or when the user already said skip docs this session. Do not offer a wiki page that copies coding rules from `AGENTS.md` / `docs/`. Do still prompt when an `AGENTS.md` or `docs/` edit is where a why / use-case / stack choice landed — that belongs on a conventions page, not a republish of the rules.
 
 Skipping the prompt because the user did not mention docs is a miss. They should not have to remember the wiki.
 
