@@ -4,9 +4,9 @@ import {
   useAdvancedMarkerRef,
 } from '@vis.gl/react-google-maps';
 
+import { mixColor } from '../../utils/colorVariants';
 import type { LatLngLike } from './LocationMap';
 import PersonInfoWindow from './PersonInfoWindow';
-import { mixColor } from '../../utils/colorVariants';
 
 export type PersonMarker = {
   id: string;

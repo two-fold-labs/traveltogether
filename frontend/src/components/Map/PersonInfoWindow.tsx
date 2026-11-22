@@ -2,8 +2,8 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import { InfoWindow } from '@vis.gl/react-google-maps';
 
-import type { PersonMarker } from './PersonMarker';
 import formatLastUpdated from '../../utils/formatLastUpdated';
+import type { PersonMarker } from './PersonMarker';
 
 type PersonInfoWindowProps = {
   person: PersonMarker;
