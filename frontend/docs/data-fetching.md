@@ -5,7 +5,9 @@ Read this when reading or changing server data, or adding a query key. Stack: Ta
 ## Where code goes
 
 - API calls live in the feature's `api.ts`. Components never call `api.ts` directly.
+- `api.ts` functions return the response body exactly as the backend types it (`GetTripsResponse`, not `Trip[]`). Don't unwrap there.
 - Each query or mutation gets its own hook file in `features/<name>/hooks/`.
+- Hooks return the `useQuery` / `useMutation` result unchanged. If a hook needs to return something else, add a comment saying why (see `usePlaceSearch`).
 - Each API request or response type in `types.ts` starts with `// Backend: <TypeName>` (or `unnamed, built in <module/file>` when the backend has no type). UI-only types get no such comment.
 - In components and hooks, get the client with `useQueryClient()`. Import the `queryClient` instance only from `app/`.
 
