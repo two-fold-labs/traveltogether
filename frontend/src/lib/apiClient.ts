@@ -1,12 +1,10 @@
-import { ApiError, toApiError } from './apiError';
+import { ApiError, NO_RESPONSE_STATUS, toApiError } from './apiError';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const NO_CONTENT_STATUS = 204;
 const INVALID_RESPONSE_CODE = 'INVALID_RESPONSE';
 const NETWORK_ERROR_CODE = 'NETWORK_ERROR';
-// No HTTP response was received, so there is no real status
-const NO_RESPONSE_STATUS = 0;
 
 interface RequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
