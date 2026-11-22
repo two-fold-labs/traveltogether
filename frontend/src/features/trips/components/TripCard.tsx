@@ -5,9 +5,9 @@ import Typography from '@mui/material/Typography';
 import { Icon } from '@/components/ui/Icon';
 import { formatDateTime, formatRelativeTime } from '@/lib/formatDate';
 
-import TripRouteStats from './TripRouteStats';
 import { isTripOwner } from '../isTripOwner';
 import type { Trip } from '../types';
+import TripRouteStats from './TripRouteStats';
 
 interface TripCardProps {
   currentUserId: string;

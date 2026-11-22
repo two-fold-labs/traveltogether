@@ -3,8 +3,8 @@ import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { APIProvider } from '@vis.gl/react-google-maps';
 
-import { queryClient } from './queryClient';
 import theme from '../theme/theme';
+import { queryClient } from './queryClient';
 
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 

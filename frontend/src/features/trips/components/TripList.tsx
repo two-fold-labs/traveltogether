@@ -1,8 +1,8 @@
 import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
 
-import TripCard from './TripCard';
 import type { Trip } from '../types';
+import TripCard from './TripCard';
 
 interface TripListProps {
   currentUserId: string;

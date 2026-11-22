@@ -2,9 +2,9 @@ import Stack from '@mui/material/Stack';
 
 import ErrorState from '@/components/ui/ErrorState';
 
+import { useTrips } from '../hooks/useTrips';
 import LiveTripCard from './LiveTripCard';
 import UpcomingTrips from './UpcomingTrips';
-import { useTrips } from '../hooks/useTrips';
 
 interface TripsOverviewProps {
   currentUserId: string;
