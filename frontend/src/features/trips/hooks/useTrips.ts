@@ -7,6 +7,8 @@ const useTrips = () => {
   const queryResult = useQuery({
     queryKey: tripKeys.list(),
     queryFn: getTrips,
+    // TripsOverview shows its own retry button, so fail fast instead of auto-retrying.
+    retry: false,
   });
 
   return queryResult;
