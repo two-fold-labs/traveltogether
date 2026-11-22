@@ -43,7 +43,7 @@ const TripCard = ({ currentUserId, trip, onView, onEdit }: TripCardProps) => {
             component="span"
             className={
               isOwner
-                ? `${BADGE_CLASS} border-transparent bg-brand-500/15 text-brand-600 dark:text-brand-300`
+                ? `${BADGE_CLASS} border-transparent bg-primary/15 text-primary`
                 : `${BADGE_CLASS} border-border bg-background text-muted-foreground`
             }
           >
