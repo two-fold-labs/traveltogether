@@ -5,11 +5,13 @@ import Typography from '@mui/material/Typography';
 import { Icon } from '@/components/ui/Icon';
 import { formatDateTime, formatRelativeTime } from '@/lib/formatDate';
 
-import { type TripCardData } from '../types';
 import TripRouteStats from './TripRouteStats';
+import { isTripOwner } from '../isTripOwner';
+import type { Trip } from '../types';
 
 interface TripCardProps {
-  trip: TripCardData;
+  currentUserId: string;
+  trip: Trip;
   onView: (tripId: string) => void;
   onEdit: (tripId: string) => void;
 }
@@ -17,8 +19,9 @@ interface TripCardProps {
 const BADGE_CLASS =
   'inline-flex items-center gap-1 rounded-full border px-2 py-0.5';
 
-const TripCard = ({ trip, onView, onEdit }: TripCardProps) => {
+const TripCard = ({ currentUserId, trip, onView, onEdit }: TripCardProps) => {
   const timeUntil = formatRelativeTime(trip.arriveBy);
+  const isOwner = isTripOwner(currentUserId, trip);
 
   return (
     <Stack
@@ -39,13 +42,13 @@ const TripCard = ({ trip, onView, onEdit }: TripCardProps) => {
             variant="badge"
             component="span"
             className={
-              trip.isOwner
+              isOwner
                 ? `${BADGE_CLASS} border-transparent bg-brand-500/15 text-brand-600 dark:text-brand-300`
                 : `${BADGE_CLASS} border-border bg-background text-muted-foreground`
             }
           >
-            <Icon name={trip.isOwner ? 'crown' : 'userGroup'} />
-            {trip.isOwner ? 'Owner' : 'Participant'}
+            <Icon name={isOwner ? 'crown' : 'userGroup'} />
+            {isOwner ? 'Owner' : 'Participant'}
           </Typography>
         </Stack>
 
@@ -59,7 +62,7 @@ const TripCard = ({ trip, onView, onEdit }: TripCardProps) => {
           className="flex min-w-0 items-center gap-1.5"
         >
           <Icon name="locationDot" className="shrink-0" />
-          <span className="truncate">{trip.destinationName}</span>
+          <span className="truncate">{trip.destination.name}</span>
         </Typography>
 
         <Typography
@@ -72,7 +75,7 @@ const TripCard = ({ trip, onView, onEdit }: TripCardProps) => {
         </Typography>
       </Stack>
 
-      <TripRouteStats route={trip.route} />
+      <TripRouteStats />
 
       <Stack direction="row" spacing={2}>
         <Button
@@ -83,7 +86,7 @@ const TripCard = ({ trip, onView, onEdit }: TripCardProps) => {
         >
           View
         </Button>
-        {trip.isOwner && (
+        {isOwner && (
           <Button
             variant="contained"
             color="primary"

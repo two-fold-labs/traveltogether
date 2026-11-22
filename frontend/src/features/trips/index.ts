@@ -7,5 +7,4 @@ export { useCreateTrip } from './hooks/useCreateTrip';
 export { default as TripCard } from './components/TripCard';
 export { default as UpcomingTrips } from './components/UpcomingTrips';
 export { default as LiveTripCard } from './components/LiveTripCard';
-export { type TripCardData } from './types';
-export { mockLiveTrip, mockUpcomingTrips } from './mockTrips';
+export { default as TripsOverview } from './components/TripsOverview';

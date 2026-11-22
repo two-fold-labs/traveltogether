@@ -4,14 +4,15 @@ import Typography from '@mui/material/Typography';
 
 import { Icon } from '@/components/ui/Icon';
 
-import { type TripCardData } from '../types';
+import { type Trip } from '../types';
 import TripList from './TripList';
 
 const PREVIEW_COUNT = 2;
 
 interface UpcomingTripsProps {
-  // Upcoming trips only, already sorted soonest first
-  trips: TripCardData[];
+  currentUserId: string;
+  // Upcoming trips only, already sorted soonest first by the API
+  trips: Trip[];
   isLoading?: boolean;
   onViewTrip: (tripId: string) => void;
   onEditTrip: (tripId: string) => void;
@@ -19,6 +20,7 @@ interface UpcomingTripsProps {
 }
 
 const UpcomingTrips = ({
+  currentUserId,
   trips,
   isLoading = false,
   onViewTrip,
@@ -56,6 +58,7 @@ const UpcomingTrips = ({
       </Stack>
 
       <TripList
+        currentUserId={currentUserId}
         trips={trips}
         isLoading={isLoading}
         previewCount={PREVIEW_COUNT}

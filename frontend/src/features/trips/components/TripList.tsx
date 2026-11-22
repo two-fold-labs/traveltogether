@@ -1,11 +1,12 @@
 import Skeleton from '@mui/material/Skeleton';
 import Typography from '@mui/material/Typography';
 
-import { type TripCardData } from '../types';
 import TripCard from './TripCard';
+import type { Trip } from '../types';
 
 interface TripListProps {
-  trips: TripCardData[];
+  currentUserId: string;
+  trips: Trip[];
   isLoading: boolean;
   previewCount: number;
   onViewTrip: (tripId: string) => void;
@@ -13,6 +14,7 @@ interface TripListProps {
 }
 
 const TripList = ({
+  currentUserId,
   trips,
   isLoading,
   previewCount,
@@ -41,6 +43,7 @@ const TripList = ({
     .slice(0, previewCount)
     .map((trip) => (
       <TripCard
+        currentUserId={currentUserId}
         key={trip.tripId}
         trip={trip}
         onView={onViewTrip}

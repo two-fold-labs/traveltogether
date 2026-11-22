@@ -5,10 +5,10 @@ import Typography from '@mui/material/Typography';
 import { Icon } from '@/components/ui/Icon';
 import { formatDateTime } from '@/lib/formatDate';
 
-import { type TripCardData } from '../types';
+import { type Trip } from '../types';
 
 interface LiveTripCardProps {
-  trip: TripCardData;
+  trip: Trip;
   onOpen: (tripId: string) => void;
 }
 
@@ -45,7 +45,7 @@ const LiveTripCard = ({ trip, onOpen }: LiveTripCardProps) => {
           className="flex min-w-0 items-center gap-1.5"
         >
           <Icon name="locationDot" className="shrink-0" />
-          <span className="truncate">{trip.destinationName}</span>
+          <span className="truncate">{trip.destination.name}</span>
         </Typography>
 
         {arrival && (
