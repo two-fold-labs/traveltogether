@@ -3,6 +3,7 @@ import Stack from '@mui/material/Stack';
 import ErrorState from '@/components/ui/ErrorState';
 
 import { useTrips } from '../hooks/useTrips';
+import { isTripExpired } from '../isTripExpired';
 import LiveTripCard from './LiveTripCard';
 import UpcomingTrips from './UpcomingTrips';
 
@@ -30,7 +31,9 @@ const TripsOverview = ({ currentUserId }: TripsOverviewProps) => {
   const trips = data?.trips ?? [];
   // The home page shows only the first live trip.
   const liveTrip = trips.find((trip) => trip.status === 'started');
-  const upcomingTrips = trips.filter((trip) => trip.status === 'created');
+  const upcomingTrips = trips.filter(
+    (trip) => trip.status === 'created' && !isTripExpired(trip),
+  );
 
   // TODO(TT-21): open the trip page from onOpen and onViewTrip
   // TODO(TT-22): open the edit page from onEditTrip
