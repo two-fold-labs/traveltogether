@@ -1,10 +1,10 @@
 ---
-description: Prompt to update Confluence TTP when decisions, ideas, architecture, schema, APIs, or conventions change
+description: Prompt to update Confluence TTP when decisions, ideas, architecture, schema, APIs, or how we build change
 alwaysApply: true
 ---
 
 # Confluence TTP — prompt, then wait
 
-When this session produced a product decision or idea, or changed as-built behaviour, architecture, database, API, or an engineering convention, **read and follow** `.cursor/skills/confluence-docs/SKILL.md` before calling the work done.
+When this session produced a product decision or idea, or changed as-built behaviour, architecture, database, API, or how we build (CI, review, hosting, a stack choice), **read and follow** `.cursor/skills/confluence-docs/SKILL.md` before calling the work done.
 
 Prompt with the points discussed and the wiki pages they belong on. Never create or edit Confluence without the user's confirmation.
