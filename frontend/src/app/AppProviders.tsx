@@ -6,7 +6,6 @@ import { APIProvider } from '@vis.gl/react-google-maps';
 import { queryClient } from './queryClient';
 import theme from '../theme/theme';
 
-
 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 interface AppProvidersProps {
