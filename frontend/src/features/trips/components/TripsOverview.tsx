@@ -32,6 +32,9 @@ const TripsOverview = ({ currentUserId }: TripsOverviewProps) => {
   const liveTrip = trips.find((trip) => trip.status === 'started');
   const upcomingTrips = trips.filter((trip) => trip.status === 'created');
 
+  // TODO(TT-21): open the trip page from onOpen and onViewTrip
+  // TODO(TT-22): open the edit page from onEditTrip
+  // TODO(TT-9): go to My Trips from onSeeAll
   return (
     <Stack spacing={6}>
       {liveTrip && <LiveTripCard trip={liveTrip} onOpen={() => undefined} />}
