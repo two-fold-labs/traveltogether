@@ -38,10 +38,11 @@ Prompt with the points discussed. Never create or edit Confluence without the us
 
 Cursor reads **`.cursor/mcp.json`**. Root **`.mcp.json`** is the portable copy (same servers) for other MCP clients. Shared under `.cursor/`: `mcp.json`, `skills/`, and tracked files in `rules/`. Everything else under `.cursor/` stays local (gitignored). Enable the servers in Cursor Settings → MCP. Do not put secrets in either file.
 
-| Server       | Use for                                     | Notes                                                                  |
-| ------------ | ------------------------------------------- | ---------------------------------------------------------------------- |
-| `mui-mcp`    | `fetchDocs` for MUI v9 API/docs when unsure | Don't use `generateReactCode`; it ignores our theme and Tailwind rules |
-| `playwright` | Agent UI debugging in a browser             | Optional; not required to run `npm run dev`                            |
+| Server       | Use for                                                | Notes                                                                                          |
+| ------------ | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| `mui-mcp`    | `fetchDocs` for MUI v9 API/docs when unsure            | Don't use `generateReactCode`; it ignores our theme and Tailwind rules                         |
+| `playwright` | Agent UI debugging in a browser                        | Optional; not required to run `npm run dev`                                                    |
+| `github`     | Reading PRs, replying to and resolving review comments | Needs a `GITHUB_PAT` env var with your personal access token; the token never goes in the file |
 
 ## Read the matching doc before starting
 
