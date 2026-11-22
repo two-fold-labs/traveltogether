@@ -16,12 +16,10 @@ const searchPlaces = async (
   const params = new URLSearchParams({ q: searchText, lat, lng });
   const path = `/places/search?${params.toString()}`;
 
-  const response = await request<PlaceSearchResponse>(path, {
+  return request<PlaceSearchResponse>(path, {
     method: 'GET',
     signal,
   });
-
-  return response.places;
 };
 
 const createTrip = async (requestBody: CreateTripRequest) => {

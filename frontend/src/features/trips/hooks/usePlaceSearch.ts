@@ -24,7 +24,7 @@ const usePlaceSearch = (searchText: string, lat: string, lng: string) => {
   // keepPreviousData keeps the last results once the query is disabled,
   // so only expose them while a search is actually allowed
   return {
-    places: enabled && data ? data : NO_PLACES,
+    places: enabled && data ? data.places : NO_PLACES,
     isFetching,
     isSearchEnabled: enabled,
   };
