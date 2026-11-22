@@ -9,7 +9,7 @@ const useCurrentUser = () => {
     );
   }
 
-  return data;
+  return data.user;
 };
 
 export { useCurrentUser };
