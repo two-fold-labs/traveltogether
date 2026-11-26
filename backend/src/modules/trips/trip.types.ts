@@ -31,6 +31,7 @@ export type TripWithDestinationRow = TripRow & {
 
 export type TripParticipantRow = {
   id: string;
+  // TODO(TT-14): rename trip_participants.trip_id to trip_row_id
   trip_id: string;
   user_id: string;
   is_owner: boolean;

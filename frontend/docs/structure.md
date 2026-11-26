@@ -6,7 +6,7 @@ Read this when creating a new file or folder, moving code, or adding an import a
 src/
 ├── app/                 # app shell: providers, router, app-level layout (Header etc.)
 ├── pages/               # thin route components; compose features; no business logic
-├── features/<name>/     # domain code: components/, hooks/, api.ts, types.ts, index.ts
+├── features/<name>/     # domain code: components/, hooks/, api.ts, queryKeys.ts, types.ts, index.ts
 ├── components/
 │   ├── ui/              # generic, domain-agnostic building blocks (Icon, Logo, DarkModeButton…)
 │   └── layout/          # generic structural pieces (PageShell, Section, SplitPane…)

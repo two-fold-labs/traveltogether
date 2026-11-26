@@ -5,7 +5,8 @@ Read this when writing a new component, hook, or utility.
 ## Components
 
 - Function components, one per file, file name = component name (`PascalCase.tsx`). Hooks are `useX.ts`.
-- Props typed with an `interface` named `<Component>Props`. When wrapping a MUI component, extend its props (`extends ButtonProps`) and spread the rest.
+- One component per file means any function that returns JSX, including small private helpers used by a single parent (`TripList`, `Metric`, `Badge`). Put each in its own file next to its parent, even if only that parent imports it. Plain non-JSX helpers and constants can stay in the component file.
+- Props typed with an `interface` named `<Component>Props`. When wrapping a MUI component, extend its props (`extends ButtonProps`) and spread the rest. Exception: use a `type` alias when the props only derive from another type and add no members (`type ErrorPageProps = Omit<ErrorStateProps, 'size'>`), since an empty `interface` fails `@typescript-eslint/no-empty-object-type`.
 - Accept `className` on reusable components and merge it with the component's own classes using `cn()` from `@/lib/cn` (`clsx` + `tailwind-merge`) once it exists. Use `class-variance-authority` for components with several variants.
 - Prefer composition (`children`, slot props) over boolean-prop explosions.
 - Wrap MUI in `components/ui` only when adding behavior or a repeated style that cannot live in the theme. Otherwise use the MUI component directly.

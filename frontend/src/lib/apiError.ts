@@ -1,4 +1,6 @@
 const FALLBACK_ERROR_CODE = 'UNKNOWN_ERROR';
+// No HTTP response was received, so there is no real status
+const NO_RESPONSE_STATUS = 0;
 
 interface ApiErrorDetail {
   field: string;
@@ -82,5 +84,5 @@ const getFieldErrors = (error: unknown): Record<string, string | undefined> => {
   );
 };
 
-export { ApiError, getFieldErrors, toApiError };
+export { ApiError, getFieldErrors, NO_RESPONSE_STATUS, toApiError };
 export type { ApiErrorDetail };
