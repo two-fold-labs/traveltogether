@@ -36,6 +36,7 @@ export const amber = { 500: '#f59e0b', 600: '#d97706' } as const;
 
 /** Same rem values as Tailwind's default text-xs ... text-2xl */
 export const fontSize = {
+  '2xs': '0.625rem',
   xs: '0.75rem',
   sm: '0.875rem',
   base: '1rem',

@@ -2,7 +2,7 @@
 
 Stack: React 19 · TypeScript · Vite · MUI v9.4 (`@mui/material`, Emotion) · Tailwind CSS v4 · FontAwesome · `@vis.gl/react-google-maps`.
 
-Commands (from `frontend/`): `npm run dev` · `npm run lint` · `npm run build`
+Commands (from `frontend/`): `npm run dev` · `npm run lint` · `npm run typecheck` · `npm run build`
 
 ## Always follow
 
@@ -14,7 +14,7 @@ Commands (from `frontend/`): `npm run dev` · `npm run lint` · `npm run build`
 6. **Imports:** MUI path imports (`@mui/material/Button`), `@/` alias, type-only imports with `import { type X }`.
 7. **Dependency direction:** `app → pages → features → components → lib`. Never import upward. Domain-aware code goes in `features/<name>/`, not `components/`.
 8. **No** `any`, non-null `!`, `console.log`, plain CSS files, or inline `style` for static values.
-9. **Before finishing:** `npm run lint` and `npx tsc -b` must pass. Works in light and dark mode.
+9. **Before finishing:** `npm run lint` and `npm run typecheck` must pass. Works in light and dark mode.
 
 ## Deferred work → Jira
 
@@ -30,7 +30,7 @@ Never create a ticket without the user's confirmation.
 Offer to create or update the team wiki (space TTP) with the `confluence-docs` skill (`.cursor/skills/confluence-docs/`, same files in `.claude/skills/confluence-docs/` for Claude Code) when:
 
 - a product decision or idea was discussed, or
-- as-built behaviour, architecture, database, API, or an engineering convention changed.
+- as-built behaviour, architecture, database, API, or how we build (CI, review, hosting, a stack choice) changed. Why and use-case, not a copy of these rules.
 
 Prompt with the points discussed. Never create or edit Confluence without the user's confirmation.
 
@@ -38,16 +38,18 @@ Prompt with the points discussed. Never create or edit Confluence without the us
 
 Cursor reads **`.cursor/mcp.json`**. Root **`.mcp.json`** is the portable copy (same servers) for other MCP clients. Shared under `.cursor/`: `mcp.json`, `skills/`, and tracked files in `rules/`. Everything else under `.cursor/` stays local (gitignored). Enable the servers in Cursor Settings → MCP. Do not put secrets in either file.
 
-| Server       | Use for                                     | Notes                                                                  |
-| ------------ | ------------------------------------------- | ---------------------------------------------------------------------- |
-| `mui-mcp`    | `fetchDocs` for MUI v9 API/docs when unsure | Don't use `generateReactCode`; it ignores our theme and Tailwind rules |
-| `playwright` | Agent UI debugging in a browser             | Optional; not required to run `npm run dev`                            |
+| Server       | Use for                                                | Notes                                                                                          |
+| ------------ | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
+| `mui-mcp`    | `fetchDocs` for MUI v9 API/docs when unsure            | Don't use `generateReactCode`; it ignores our theme and Tailwind rules                         |
+| `playwright` | Agent UI debugging in a browser                        | Optional; not required to run `npm run dev`                                                    |
+| `github`     | Reading PRs, replying to and resolving review comments | Needs a `GITHUB_PAT` env var with your personal access token; the token never goes in the file |
 
 ## Read the matching doc before starting
 
-| When you are…                                                                                 | Read                                       |
-| --------------------------------------------------------------------------------------------- | ------------------------------------------ |
-| Building or restyling a component, responsive or dark-mode behavior                           | [docs/styling.md](docs/styling.md)         |
-| Changing colors, typography, theme overrides, `index.css`, or unsure which color class to use | [docs/theme.md](docs/theme.md)             |
-| Creating or moving files, or adding cross-folder imports                                      | [docs/structure.md](docs/structure.md)     |
-| Writing a new component, hook, util, or env variable                                          | [docs/conventions.md](docs/conventions.md) |
+| When you are…                                                                                 | Read                                           |
+| --------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| Building or restyling a component, responsive or dark-mode behavior                           | [docs/styling.md](docs/styling.md)             |
+| Changing colors, typography, theme overrides, `index.css`, or unsure which color class to use | [docs/theme.md](docs/theme.md)                 |
+| Creating or moving files, or adding cross-folder imports                                      | [docs/structure.md](docs/structure.md)         |
+| Writing a new component, hook, util, or env variable                                          | [docs/conventions.md](docs/conventions.md)     |
+| Fetching or changing server data, query keys, mutations, API errors                           | [docs/data-fetching.md](docs/data-fetching.md) |

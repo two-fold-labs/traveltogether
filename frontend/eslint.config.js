@@ -1,3 +1,5 @@
+import path from 'node:path';
+
 import js from '@eslint/js';
 import globals from 'globals';
 import react from 'eslint-plugin-react';
@@ -33,14 +35,22 @@ export default defineConfig([
       globals: globals.browser,
       parserOptions: {
         projectService: true,
+        tsconfigRootDir: import.meta.dirname,
       },
     },
+    // Paths are absolute so linting works no matter which folder ESLint runs
+    // from (e.g. the editor running it from the repo root).
     settings: {
       react: { version: 'detect' },
       'better-tailwindcss': {
-        entryPoint: 'src/index.css', // Tailwind v4
+        cwd: import.meta.dirname, // where tailwindcss is installed
+        entryPoint: path.join(import.meta.dirname, 'src/index.css'), // Tailwind v4
       },
-      'import-x/resolver-next': [createTypeScriptImportResolver()],
+      'import-x/resolver-next': [
+        createTypeScriptImportResolver({
+          project: path.join(import.meta.dirname, 'tsconfig.app.json'),
+        }),
+      ],
     },
     rules: {
       'react/prop-types': 'off',

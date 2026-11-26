@@ -87,9 +87,28 @@ let theme = createTheme({
       fontWeight: fontWeight.bold,
       lineHeight: 1.35,
     },
-    body1: { fontSize: fontSize.sm, lineHeight: 1.5 },
+    subtitle1: {
+      fontSize: fontSize.base,
+      fontWeight: fontWeight.extrabold,
+      letterSpacing: '-0.025em',
+      lineHeight: 1.25,
+    },
     body2: { fontSize: fontSize.xs, lineHeight: 1.5 },
     caption: { fontSize: fontSize.xs, fontWeight: fontWeight.semibold },
+    overline: {
+      fontSize: fontSize.xs,
+      fontWeight: fontWeight.semibold,
+      letterSpacing: '0.05em',
+      lineHeight: 1.33,
+    },
+    // small uppercase pill text (status / role badges)
+    badge: {
+      fontSize: fontSize['2xs'],
+      fontWeight: fontWeight.bold,
+      letterSpacing: '0.05em',
+      lineHeight: 1.4,
+      textTransform: 'uppercase',
+    },
     button: {
       fontSize: fontSize.xs,
       fontWeight: fontWeight.bold,
@@ -118,6 +137,10 @@ let theme = createTheme({
           '& > *:nth-of-type(1)': { fontSize: fontSize.xs }, // beats MUI's 20px default
           color: theme.vars.palette.brand[500],
         }),
+        endIcon: {
+          margin: 0,
+          '& > *:nth-of-type(1)': { fontSize: fontSize.xs },
+        },
       },
       variants: [
         // contained + primary = brand gradient (every Create-style button gets it)
@@ -203,31 +226,23 @@ let theme = createTheme({
   },
 });
 
+// Second pass: for options that read the built theme (theme.breakpoints,
+// theme.spacing(), etc.) where MUI gives no ({ theme }) callback, such as
+// typography variants. Component styleOverrides/variants get the theme
+// through their callback, so they stay in the first pass.
 theme = createTheme(theme, {
   typography: {
     h4: {
-      fontSize: '1.5rem',
-      fontWeight: 700,
+      fontSize: fontSize['2xl'],
+      fontWeight: fontWeight.bold,
       lineHeight: 1.2,
       [theme.breakpoints.up('sm')]: { fontSize: '1.75rem' },
       [theme.breakpoints.up('md')]: { fontSize: '2rem' },
     },
     body1: {
-      fontSize: '1rem',
+      fontSize: fontSize.base,
       lineHeight: 1.5,
       [theme.breakpoints.up('md')]: { fontSize: '1.0625rem' },
-    },
-    overline: {
-      fontSize: fontSize.xs,
-      fontWeight: fontWeight.semibold,
-      letterSpacing: '0.05em',
-      lineHeight: 1.33,
-    },
-    subtitle1: {
-      fontSize: fontSize.base,
-      fontWeight: fontWeight.extrabold,
-      letterSpacing: '-0.025em',
-      lineHeight: 1.25,
     },
   },
 });
