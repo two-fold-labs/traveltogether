@@ -31,6 +31,10 @@ export type TripWithDestinationRow = TripRow & {
   location_longitude: string;
 };
 
+export type TripWithDestinationAndHostRow = TripWithDestinationRow & {
+  host_name: string | null;
+};
+
 export type TripParticipantRow = {
   id: string;
   trip_row_id: string;
@@ -73,5 +77,6 @@ export type PublicTripInvite = {
 };
 
 export type JoinTripResult = {
-  tripId: string;
+  trip: PublicTrip;
+  created: boolean;
 };

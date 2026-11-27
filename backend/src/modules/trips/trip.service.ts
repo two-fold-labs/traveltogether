@@ -20,10 +20,12 @@ import { mapTrip, mapTripInvite } from './trip.mapper.js';
 import * as tripRepository from './trip.repository.js';
 import type {
   JoinTripResult,
+  LocationRow,
   PublicTrip,
   PublicTripInvite,
   PublicTripList,
   TripParticipantRow,
+  TripRow,
 } from './trip.types.js';
 
 const createTrip = async (
@@ -160,7 +162,9 @@ const getTripInvite = async (
   userId: string,
   tripId: string,
 ): Promise<PublicTripInvite> => {
-  const invite = await tripRepository.findTripInviteByTripId(tripId);
+  const invite = await tripRepository.findTripWithDestinationAndHostByTripId(
+    tripId,
+  );
 
   if (!invite) {
     throw new NotFoundError('Trip not found.');
@@ -180,19 +184,35 @@ const getTripInvite = async (
   );
 };
 
+const toJoinTripResult = async (
+  tripWithDestination: { trip: TripRow; location: LocationRow },
+  created: boolean,
+): Promise<JoinTripResult> => {
+  const participants = await tripRepository.findTripParticipantsByTripRowId(
+    tripWithDestination.trip.id,
+  );
+
+  return {
+    trip: mapTrip(
+      tripWithDestination.trip,
+      tripWithDestination.location,
+      participants,
+    ),
+    created,
+  };
+};
+
 const joinTrip = async (
   userId: string,
   tripId: string,
   sourceLocation: PublicLocation,
-): Promise<JoinTripResult & { created: boolean }> => {
+): Promise<JoinTripResult> => {
   const tripWithDestination =
     await tripRepository.findTripWithDestinationByTripId(tripId);
 
   if (!tripWithDestination) {
     throw new NotFoundError('Trip not found.');
   }
-
-  const publicTripId = tripWithDestination.trip.trip_id;
 
   return withTransaction(async () => {
     const existing =
@@ -202,7 +222,7 @@ const joinTrip = async (
       );
 
     if (existing) {
-      return { tripId: publicTripId, created: false };
+      return toJoinTripResult(tripWithDestination, false);
     }
 
     // Status is from the read before this transaction. Re-fetch and lock the
@@ -228,10 +248,10 @@ const joinTrip = async (
     // A concurrent join can win the unique constraint. The locations row
     // inserted above is then unused; harmless.
     if (!participant) {
-      return { tripId: publicTripId, created: false };
+      return toJoinTripResult(tripWithDestination, false);
     }
 
-    return { tripId: publicTripId, created: true };
+    return toJoinTripResult(tripWithDestination, true);
   });
 };
 

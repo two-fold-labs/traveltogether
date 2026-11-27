@@ -6,6 +6,7 @@ const router = Router();
 
 router.get('/search', placeController.searchPlace);
 router.get('/reverse', placeController.reversePlace);
-router.get('/details/:placeId', placeController.getPlaceDetails);
+// After /search and /reverse: PLACE_ID_PATTERN also matches those words.
+router.get('/:placeId', placeController.getPlaceDetails);
 
 export default router;
