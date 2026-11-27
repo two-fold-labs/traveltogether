@@ -93,9 +93,9 @@ export interface JoinTripRequest {
   sourceLocation: TripDestination;
 }
 
-// Backend: unnamed, built in trip.controller.ts joinTrip
+// Backend: joinTrip controller body `{ trip: PublicTrip }`
 export interface JoinTripResponse {
-  tripId: string;
+  trip: Trip;
 }
 
 // Backend: PublicTripList

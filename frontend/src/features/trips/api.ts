@@ -40,7 +40,7 @@ const getTrips = async () => {
 };
 
 const getTripInvite = async (tripId: string, signal?: AbortSignal) => {
-  const path = `/trips/join/${encodeURIComponent(tripId)}`;
+  const path = `/trips/${encodeURIComponent(tripId)}/invite`;
 
   return request<TripInviteResponse>(path, {
     method: 'GET',
@@ -48,9 +48,9 @@ const getTripInvite = async (tripId: string, signal?: AbortSignal) => {
   });
 };
 
-// GET /places/details/:placeId returns PublicLocation (TripDestination), not Google PlaceDetails
+// GET /places/:placeId returns PublicLocation (TripDestination), not Google PlaceDetails
 const getPlaceDetails = async (placeId: string, signal?: AbortSignal) => {
-  const path = `/places/details/${encodeURIComponent(placeId)}`;
+  const path = `/places/${encodeURIComponent(placeId)}`;
 
   return request<TripDestination>(path, {
     method: 'GET',
@@ -59,7 +59,7 @@ const getPlaceDetails = async (placeId: string, signal?: AbortSignal) => {
 };
 
 const joinTrip = async (tripId: string, requestBody: JoinTripRequest) => {
-  const path = `/trips/join/${encodeURIComponent(tripId)}`;
+  const path = `/trips/${encodeURIComponent(tripId)}/participants`;
 
   return request<JoinTripResponse>(path, {
     method: 'POST',
