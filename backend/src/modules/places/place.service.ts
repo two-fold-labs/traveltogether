@@ -7,15 +7,15 @@ import { googleGeocodingClient } from '#integrations/google/geocoding/google-geo
 import { googlePlacesClient } from '#integrations/google/places/google-places.client.js';
 import type { LatLngLiteral } from '#types/location.types.js';
 import type { PublicLocation } from '#types/public-location.js';
+import { clampText } from '#utils/clamp-text.js';
 
 import { CURRENT_LOCATION_NAME } from './place.constants.js';
 
 // Google's labels have no length limit, but the client posts these locations
-// back as a trip's source location, which `joinTripSchema` caps at the same
-// lengths (the `locations` column sizes). Clamp here so a successful lookup
-// can never be rejected on join.
-const clampLabel = (value: string, maxLength: number) =>
-  value.trim().slice(0, maxLength).trimEnd();
+// back as a trip's source location, and `joinTripSchema` caps them at
+// LOCATION_NAME_MAX_LENGTH (the `locations.name` column size) and
+// LOCATION_ADDRESS_MAX_LENGTH (a schema-only limit; `address` is TEXT). Clamp
+// so a successful lookup can never be rejected on join.
 
 const getSearchPlaceSuggestions = (
   searchText: string,
@@ -32,8 +32,8 @@ const getPlaceLocation = async (placeId: string): Promise<PublicLocation> => {
   }
 
   return {
-    name: clampLabel(placeDetails.name, LOCATION_NAME_MAX_LENGTH),
-    address: clampLabel(placeDetails.address, LOCATION_ADDRESS_MAX_LENGTH),
+    name: clampText(placeDetails.name, LOCATION_NAME_MAX_LENGTH),
+    address: clampText(placeDetails.address, LOCATION_ADDRESS_MAX_LENGTH),
     lat: placeDetails.lat,
     lng: placeDetails.lng,
   };
@@ -47,11 +47,11 @@ const reversePlaceLocation = async (
   const result = await googleGeocodingClient.reverseGeocode(point);
 
   return {
-    name: clampLabel(
+    name: clampText(
       result?.name ?? CURRENT_LOCATION_NAME,
       LOCATION_NAME_MAX_LENGTH,
     ),
-    address: clampLabel(result?.address ?? '', LOCATION_ADDRESS_MAX_LENGTH),
+    address: clampText(result?.address ?? '', LOCATION_ADDRESS_MAX_LENGTH),
     lat: point.lat,
     lng: point.lng,
   };

@@ -2,12 +2,17 @@ import { randomInt } from 'node:crypto';
 
 import { withTransaction } from '#config/db.js';
 import {
+  LOCATION_ADDRESS_MAX_LENGTH,
+  LOCATION_NAME_MAX_LENGTH,
+} from '#constants/location.constants.js';
+import {
   ConflictError,
   NotFoundError,
   ValidationError,
 } from '#errors/app-error.js';
 import { googlePlacesClient } from '#integrations/google/places/google-places.client.js';
 import type { PublicLocation } from '#types/public-location.js';
+import { clampText } from '#utils/clamp-text.js';
 
 import {
   TRIP_ID_ALPHABET,
@@ -48,8 +53,9 @@ const createTrip = async (
 
   const createdTrip = await withTransaction(async () => {
     const location = await tripRepository.insertLocation({
-      name: placeDetails.name,
-      address: placeDetails.address,
+      // Google's labels are unbounded; `locations.name` is VARCHAR(255).
+      name: clampText(placeDetails.name, LOCATION_NAME_MAX_LENGTH),
+      address: clampText(placeDetails.address, LOCATION_ADDRESS_MAX_LENGTH),
       lat: placeDetails.lat,
       lng: placeDetails.lng,
     });
