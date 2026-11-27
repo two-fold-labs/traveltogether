@@ -13,6 +13,8 @@ import {
   PLACE_ID_PATTERN,
 } from '#constants/place.constants.js';
 
+import { TRIP_ID_PATTERN } from './trip.constants.js';
+
 const createTripSchema = z
   .object({
     name: z
@@ -34,7 +36,7 @@ const createTripSchema = z
   });
 
 const getTripSchema = z.object({
-  tripId: z.string().trim().min(1).max(12),
+  tripId: z.string().trim().toUpperCase().regex(TRIP_ID_PATTERN),
 });
 
 const joinTripSchema = z.object({

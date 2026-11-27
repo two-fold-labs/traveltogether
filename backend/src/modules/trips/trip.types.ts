@@ -31,8 +31,13 @@ export type TripWithDestinationRow = TripRow & {
   location_longitude: string;
 };
 
+export type TripWithDestinationAndHostRow = TripWithDestinationRow & {
+  host_name: string | null;
+};
+
 export type TripParticipantRow = {
   id: string;
+  // TODO(TT-14): rename trip_participants.trip_id to trip_row_id
   trip_id: string;
   user_id: string;
   is_owner: boolean;
@@ -73,5 +78,6 @@ export type PublicTripInvite = {
 };
 
 export type JoinTripResult = {
-  tripId: string;
+  trip: PublicTrip;
+  created: boolean;
 };

@@ -10,6 +10,9 @@ export const TRIP_ID_PREFIX = 'TT-';
 export const TRIP_ID_SUFFIX_LENGTH = 8;
 // Excludes look-alike characters: I, L, O, 0, 1.
 export const TRIP_ID_ALPHABET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
+export const TRIP_ID_PATTERN = new RegExp(
+  `^${TRIP_ID_PREFIX}[${TRIP_ID_ALPHABET}]{${String(TRIP_ID_SUFFIX_LENGTH)}}$`,
+);
 export const TRIP_ID_MAX_ATTEMPTS = 5;
-// TODO(TT-15): Replace this hardcoded cap with pagination, sorting, and filtering on list APIs.
+// TODO(TT-15): Replace this hardcoded cap with cursor pagination on GET /trips.
 export const TRIP_LIST_LIMIT = 50;

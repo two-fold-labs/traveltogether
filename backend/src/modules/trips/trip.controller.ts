@@ -75,7 +75,7 @@ const joinTrip: RequestHandler = async (req, res, next) => {
     const result = await tripService.joinTrip(userId, tripId, sourceLocation);
 
     res.status(result.created ? 201 : 200).json({
-      tripId: result.tripId,
+      trip: result.trip,
     });
   } catch (error) {
     next(error);

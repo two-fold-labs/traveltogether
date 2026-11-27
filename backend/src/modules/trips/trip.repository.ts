@@ -2,10 +2,11 @@ import { getDb } from '#config/db.js';
 
 import { TRIP_LIST_LIMIT } from './trip.constants.js';
 import type {
-  TripRow,
   LocationRow,
-  TripWithDestinationRow,
   TripParticipantRow,
+  TripRow,
+  TripWithDestinationAndHostRow,
+  TripWithDestinationRow,
 } from './trip.types.js';
 
 interface InsertLocationInput {
@@ -149,14 +150,10 @@ const findTripWithDestinationByTripId = async (tripId: string) => {
   return toTripWithLocation(row);
 };
 
-type TripInviteRow = TripWithDestinationRow & {
-  host_name: string | null;
-};
-
-const findTripInviteByTripId = async (tripId: string) => {
+const findTripWithDestinationAndHostByTripId = async (tripId: string) => {
   const db = getDb();
 
-  const result = await db.query<TripInviteRow>(
+  const result = await db.query<TripWithDestinationAndHostRow>(
     `SELECT
        t.id, t.trip_id, t.name, t.arrive_by, t.status, t.created_at,
        t.started_at, t.ended_at, t.destination_location_id, t.created_by,
@@ -186,7 +183,11 @@ const findTripInviteByTripId = async (tripId: string) => {
     return undefined;
   }
 
-  return { ...toTripWithLocation(row), hostName: row.host_name ?? '' };
+  if (row.host_name === null) {
+    throw new Error(`Trip ${tripId} has no owner`);
+  }
+
+  return { ...toTripWithLocation(row), hostName: row.host_name };
 };
 
 const findTripParticipantByTripRowIdAndUserId = async (
@@ -235,6 +236,8 @@ const findTripParticipantsByTripRowIds = async (tripRowIds: string[]) => {
 const findTripsWithDestinationByUserId = async (userId: string) => {
   const db = getDb();
 
+  // Soonest arrival first for the home page's upcoming preview, trips without
+  // an arrival time last. Each status gets its own order once filtering exists.
   const text = `SELECT
                   t.id, t.trip_id, t.name, t.arrive_by, t.status, t.created_at, t.started_at, t.ended_at,
                   t.created_by, t.destination_location_id, l.id AS location_id, l.name AS location_name,
@@ -245,7 +248,7 @@ const findTripsWithDestinationByUserId = async (userId: string) => {
                   SELECT 1 FROM trip_participants tp
                   WHERE tp.trip_id = t.id AND tp.user_id = $1
                 )
-                ORDER BY t.created_at DESC, t.id
+                ORDER BY t.arrive_by ASC NULLS LAST, t.id
                 LIMIT $2`;
   const values = [userId, TRIP_LIST_LIMIT];
 
@@ -259,7 +262,7 @@ export {
   insertTrip,
   insertTripParticipant,
   findTripWithDestinationByTripId,
-  findTripInviteByTripId,
+  findTripWithDestinationAndHostByTripId,
   findTripParticipantByTripRowIdAndUserId,
   findTripParticipantsByTripRowId,
   findTripParticipantsByTripRowIds,
