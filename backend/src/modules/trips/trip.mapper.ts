@@ -1,10 +1,20 @@
+import type { PublicLocation } from '#types/public-location.js';
+
 import type {
   LocationRow,
   PublicParticipant,
   PublicTrip,
+  PublicTripInvite,
   TripParticipantRow,
   TripRow,
 } from './trip.types.js';
+
+const mapLocation = (location: LocationRow): PublicLocation => ({
+  name: location.name,
+  address: location.address ?? '',
+  lat: Number(location.latitude),
+  lng: Number(location.longitude),
+});
 
 export function mapTrip(
   trip: TripRow,
@@ -29,12 +39,24 @@ export function mapTrip(
     arriveBy: trip.arrive_by,
     status: trip.status,
     createdAt: trip.created_at,
-    destination: {
-      name: location.name,
-      address: location.address ?? '',
-      lat: Number(location.latitude),
-      lng: Number(location.longitude),
-    },
+    destination: mapLocation(location),
     participants: participantsDetails,
+  };
+}
+
+export function mapTripInvite(
+  trip: TripRow,
+  location: LocationRow,
+  hostName: string,
+  alreadyJoined: boolean,
+): PublicTripInvite {
+  return {
+    tripId: trip.trip_id,
+    name: trip.name,
+    arriveBy: trip.arrive_by,
+    status: trip.status,
+    hostName,
+    destination: mapLocation(location),
+    alreadyJoined,
   };
 }

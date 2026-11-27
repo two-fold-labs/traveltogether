@@ -15,6 +15,10 @@ export const ERROR_CODES = {
     statusCode: 401,
     message: 'Unauthorized',
   },
+  CONFLICT: {
+    statusCode: 409,
+    message: 'Conflict',
+  },
 } as const;
 
 export type ErrorCode = keyof typeof ERROR_CODES;

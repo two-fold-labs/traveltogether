@@ -1,21 +1,36 @@
 import { randomInt } from 'node:crypto';
 
 import { withTransaction } from '#config/db.js';
-import { NotFoundError, ValidationError } from '#errors/app-error.js';
+import {
+  LOCATION_ADDRESS_MAX_LENGTH,
+  LOCATION_NAME_MAX_LENGTH,
+} from '#constants/location.constants.js';
+import {
+  ConflictError,
+  NotFoundError,
+  ValidationError,
+} from '#errors/app-error.js';
 import { googlePlacesClient } from '#integrations/google/places/google-places.client.js';
+import type { PublicLocation } from '#types/public-location.js';
+import { clampText } from '#utils/clamp-text.js';
 
 import {
   TRIP_ID_ALPHABET,
   TRIP_ID_MAX_ATTEMPTS,
   TRIP_ID_PREFIX,
   TRIP_ID_SUFFIX_LENGTH,
+  TRIP_STATUS,
 } from './trip.constants.js';
-import { mapTrip } from './trip.mapper.js';
+import { mapTrip, mapTripInvite } from './trip.mapper.js';
 import * as tripRepository from './trip.repository.js';
 import type {
+  JoinTripResult,
+  LocationRow,
   PublicTrip,
+  PublicTripInvite,
   PublicTripList,
   TripParticipantRow,
+  TripRow,
 } from './trip.types.js';
 
 const createTrip = async (
@@ -38,8 +53,9 @@ const createTrip = async (
 
   const createdTrip = await withTransaction(async () => {
     const location = await tripRepository.insertLocation({
-      name: placeDetails.name,
-      address: placeDetails.address,
+      // Google's labels are unbounded; `locations.name` is VARCHAR(255).
+      name: clampText(placeDetails.name, LOCATION_NAME_MAX_LENGTH),
+      address: clampText(placeDetails.address, LOCATION_ADDRESS_MAX_LENGTH),
       lat: placeDetails.lat,
       lng: placeDetails.lng,
     });
@@ -62,6 +78,10 @@ const createTrip = async (
           isOwner: true,
           sourceLocationId: location.id,
         });
+
+        if (!participant) {
+          throw new Error('Failed to insert trip participant');
+        }
 
         return { trip, location, participant };
       }
@@ -142,4 +162,100 @@ const generateTripId = () => {
   return `${TRIP_ID_PREFIX}${suffix}`;
 };
 
-export { createTrip, getTrip, getTrips };
+const getTripInvite = async (
+  userId: string,
+  tripId: string,
+): Promise<PublicTripInvite> => {
+  const invite =
+    await tripRepository.findTripWithDestinationAndHostByTripId(tripId);
+
+  if (!invite) {
+    throw new NotFoundError('Trip not found.');
+  }
+
+  const participant =
+    await tripRepository.findTripParticipantByTripRowIdAndUserId(
+      invite.trip.id,
+      userId,
+    );
+
+  return mapTripInvite(
+    invite.trip,
+    invite.location,
+    invite.hostName,
+    participant !== undefined,
+  );
+};
+
+const toJoinTripResult = async (
+  tripWithDestination: { trip: TripRow; location: LocationRow },
+  created: boolean,
+): Promise<JoinTripResult> => {
+  const participants = await tripRepository.findTripParticipantsByTripRowId(
+    tripWithDestination.trip.id,
+  );
+
+  return {
+    trip: mapTrip(
+      tripWithDestination.trip,
+      tripWithDestination.location,
+      participants,
+    ),
+    created,
+  };
+};
+
+const joinTrip = async (
+  userId: string,
+  tripId: string,
+  sourceLocation: PublicLocation,
+): Promise<JoinTripResult> => {
+  const tripWithDestination =
+    await tripRepository.findTripWithDestinationByTripId(tripId);
+
+  if (!tripWithDestination) {
+    throw new NotFoundError('Trip not found.');
+  }
+
+  return withTransaction(async () => {
+    const existing =
+      await tripRepository.findTripParticipantByTripRowIdAndUserId(
+        tripWithDestination.trip.id,
+        userId,
+      );
+
+    if (existing) {
+      return toJoinTripResult(tripWithDestination, false);
+    }
+
+    // Status is from the read before this transaction. Re-fetch and lock the
+    // trip row here when end-trip can run concurrently with join.
+    if (tripWithDestination.trip.status === TRIP_STATUS.ENDED) {
+      throw new ConflictError('This trip has ended.');
+    }
+
+    const location = await tripRepository.insertLocation({
+      name: sourceLocation.name,
+      address: sourceLocation.address,
+      lat: sourceLocation.lat,
+      lng: sourceLocation.lng,
+    });
+
+    const participant = await tripRepository.insertTripParticipant({
+      tripRowId: tripWithDestination.trip.id,
+      userId,
+      isOwner: false,
+      sourceLocationId: location.id,
+    });
+
+    // A concurrent join can win the unique constraint. The locations row
+    // inserted above is then unused; harmless.
+    if (!participant) {
+      return toJoinTripResult(tripWithDestination, false);
+    }
+
+    return toJoinTripResult(tripWithDestination, true);
+  });
+};
+
+export { createTrip, getTrip, getTripInvite, getTrips, joinTrip };

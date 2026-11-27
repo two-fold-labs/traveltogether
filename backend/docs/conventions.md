@@ -55,7 +55,6 @@ Errors live in `src/errors/`; `src/middlewares/error-handler.ts` turns them into
 - **Throw, don't respond.** Throw and let `errorHandler` respond (an `AppError` subclass for operational errors, see below). Don't hand-build error JSON in new code.
 - **Add a new error** as a code in `error.constants.ts` (it fixes the status and default message); don't pass a status separately.
 - **Security-sensitive endpoints** (login, tokens): don't let a `ZodError` through, since its issues become the response `details`. Throw an error without `details`.
-- **Legacy:** `trips/` and `places/` still hand-build `400` responses; migrate them when touched.
 
 ### Two kinds of error
 
