@@ -54,7 +54,7 @@ interface TripParticipant {
 
 // Backend: PublicLocation
 // The name can be TripLocation based on future usecase.
-interface TripDestination {
+export interface TripDestination {
   name: string;
   address: string;
   lat: number;
@@ -70,6 +70,32 @@ export interface Trip {
   createdAt: string;
   destination: TripDestination;
   participants: TripParticipant[];
+}
+
+// Backend: PublicTripInvite
+export interface TripInvite {
+  tripId: string;
+  name: string;
+  arriveBy: string | null;
+  status: TripStatus;
+  hostName: string;
+  destination: TripDestination;
+  alreadyJoined: boolean;
+}
+
+// Backend: unnamed, built in trip.controller.ts getTripInvite
+export interface TripInviteResponse {
+  trip: TripInvite;
+}
+
+// Backend: JoinTripBody
+export interface JoinTripRequest {
+  sourceLocation: TripDestination;
+}
+
+// Backend: unnamed, built in trip.controller.ts joinTrip
+export interface JoinTripResponse {
+  tripId: string;
 }
 
 // Backend: PublicTripList

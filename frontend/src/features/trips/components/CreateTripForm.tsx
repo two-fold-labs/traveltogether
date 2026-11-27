@@ -30,6 +30,12 @@ const emptyValues: CreateTripValues = {
   destination: null,
 };
 
+// Todo: Remove hardcode latitude and longitude
+const PLACE_SEARCH_ORIGIN = {
+  lat: '26.852208',
+  lng: '80.862040',
+};
+
 const validate = ({ name, arriveBy, destination }: CreateTripValues) => {
   const errors: CreateTripErrors = {};
   const nameLength = name.trim().length;
@@ -209,6 +215,8 @@ const CreateTripForm = ({
               key={resetCount}
               id="destination"
               value={values.destination}
+              originLat={PLACE_SEARCH_ORIGIN.lat}
+              originLng={PLACE_SEARCH_ORIGIN.lng}
               onChange={(v) => setField('destination', v)}
               error={errors.destination}
             />
