@@ -1,11 +1,11 @@
 import ErrorState from '@/components/ui/ErrorState';
 
+import { useTripInvite } from '../hooks/useTripInvite';
 import InviteAlreadyJoined from './InviteAlreadyJoined';
 import InviteDetails from './InviteDetails';
 import InviteEnded from './InviteEnded';
 import InviteLoading from './InviteLoading';
 import InviteUnavailable from './InviteUnavailable';
-import { useTripInvite } from '../hooks/useTripInvite';
 
 interface JoinInviteProps {
   tripId: string | undefined;
