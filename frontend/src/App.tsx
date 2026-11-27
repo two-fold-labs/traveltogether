@@ -1,33 +1,24 @@
+import { useState } from 'react';
 import { Outlet } from 'react-router';
 
 import Header from '@/app/layout/Header';
+import { JoinTripDialog, type JoinTripOutletContext } from '@/features/trips';
 
 function App() {
+  const [joinDialogOpen, setJoinDialogOpen] = useState(false);
+  const onJoinTrip = () => setJoinDialogOpen(true);
+  const outletContext: JoinTripOutletContext = { onJoinTrip };
+
   return (
     <>
       <div className="flex h-dvh flex-col">
-        <Header />
-        <Outlet />
+        <Header onJoinTrip={onJoinTrip} />
+        <Outlet context={outletContext} />
       </div>
-      {/* <Grid
-          container
-          component="main"
-          columns={{ xs: 4, sm: 8, md: 12 }}
-          sx={{
-            minHeight: "100dvh",
-            justifyContent: "center",
-            boxSizing: "border-box",
-            p: { xs: 1, sm: 2, md: 3 },
-          }}
-        >
-          <Grid size={{ xs: 4, sm: 8, md: 12 }}>
-            <LocationHeader />
-          </Grid>
-
-          <Grid size={{ xs: 4, sm: 6, md: 6 }}>
-            <LocationShare />
-          </Grid>
-        </Grid> */}
+      <JoinTripDialog
+        open={joinDialogOpen}
+        onClose={() => setJoinDialogOpen(false)}
+      />
     </>
   );
 }

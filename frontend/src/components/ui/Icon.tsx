@@ -31,6 +31,10 @@ import {
   faCalendarCheck,
   faEye,
   faPenToSquare,
+  faXmark,
+  faCopy,
+  faCheck,
+  faShareNodes,
 } from '@fortawesome/free-solid-svg-icons';
 import {
   FontAwesomeIcon,
@@ -69,7 +73,10 @@ const icons = {
   calendarCheck: faCalendarCheck,
   eye: faEye,
   penToSquare: faPenToSquare,
-  // ...rest
+  xmark: faXmark,
+  copy: faCopy,
+  check: faCheck,
+  shareNodes: faShareNodes,
 } as const satisfies Record<string, IconDefinition>;
 
 export type IconName = keyof typeof icons;

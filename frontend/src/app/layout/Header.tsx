@@ -9,7 +9,11 @@ import { ROUTES } from '@/lib/routes';
 
 import LocationShareButton from './LocationShareButton';
 
-const Header = () => (
+interface HeaderProps {
+  onJoinTrip: () => void;
+}
+
+const Header = ({ onJoinTrip }: HeaderProps) => (
   <AppBar component="header">
     <Toolbar
       disableGutters
@@ -28,7 +32,7 @@ const Header = () => (
         aria-label="Primary"
         className="flex shrink-0 items-center gap-1.5 sm:gap-2"
       >
-        <JoinTripButton />
+        <JoinTripButton onClick={onJoinTrip} />
         <CreateTripButton />
         <DarkModeButton />
       </nav>

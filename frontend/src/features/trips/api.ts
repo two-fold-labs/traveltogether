@@ -3,8 +3,12 @@ import { request } from '@/lib/apiClient';
 import type {
   CreateTripRequest,
   GetTripsResponse,
+  JoinTripRequest,
+  JoinTripResponse,
   PlaceSearchResponse,
   Trip,
+  TripDestination,
+  TripInviteResponse,
 } from './types';
 
 const searchPlaces = async (
@@ -35,4 +39,39 @@ const getTrips = async () => {
   });
 };
 
-export { searchPlaces, createTrip, getTrips };
+const getTripInvite = async (tripId: string, signal?: AbortSignal) => {
+  const path = `/trips/${encodeURIComponent(tripId)}/invite`;
+
+  return request<TripInviteResponse>(path, {
+    method: 'GET',
+    signal,
+  });
+};
+
+// GET /places/:placeId returns PublicLocation (TripDestination), not Google PlaceDetails
+const getPlaceDetails = async (placeId: string, signal?: AbortSignal) => {
+  const path = `/places/${encodeURIComponent(placeId)}`;
+
+  return request<TripDestination>(path, {
+    method: 'GET',
+    signal,
+  });
+};
+
+const joinTrip = async (tripId: string, requestBody: JoinTripRequest) => {
+  const path = `/trips/${encodeURIComponent(tripId)}/participants`;
+
+  return request<JoinTripResponse>(path, {
+    method: 'POST',
+    body: requestBody,
+  });
+};
+
+export {
+  searchPlaces,
+  createTrip,
+  getTrips,
+  getTripInvite,
+  getPlaceDetails,
+  joinTrip,
+};

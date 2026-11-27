@@ -4,6 +4,7 @@ import App from '@/App';
 import { ROUTES } from '@/lib/routes';
 import CreateTripPage from '@/pages/CreateTripPage';
 import HomePage from '@/pages/HomePage';
+import JoinTripPage from '@/pages/JoinTripPage';
 
 const AppRoutes = () => {
   return (
@@ -12,6 +13,7 @@ const AppRoutes = () => {
         <Route path={ROUTES.HOME} element={<App />}>
           <Route index element={<HomePage />} />
           <Route path={ROUTES.CREATE_TRIP} element={<CreateTripPage />} />
+          <Route path={ROUTES.JOIN} element={<JoinTripPage />} />
         </Route>
 
         {/* Catch-all route redirecting to home */}

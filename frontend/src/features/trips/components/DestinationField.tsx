@@ -6,7 +6,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 
-import { Icon } from '@/components/ui/Icon';
+import { Icon, type IconName } from '@/components/ui/Icon';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 
 import { MIN_SEARCH_LENGTH, usePlaceSearch } from '../hooks/usePlaceSearch';
@@ -17,24 +17,29 @@ interface DestinationFieldProps {
   id: string;
   value: PlaceSuggestion | null;
   onChange: (value: PlaceSuggestion | null) => void;
+  originLat: string;
+  originLng: string;
   error?: string;
+  selectedIcon?: IconName;
 }
 
 const DestinationField = ({
   id,
   value,
   onChange,
+  originLat,
+  originLng,
   error,
+  selectedIcon = 'flagCheckered',
 }: DestinationFieldProps) => {
   const [inputValue, setInputValue] = useState(value?.name ?? '');
   const debouncedInputValue = useDebouncedValue(inputValue, 300);
   const optionSelected = value?.name === debouncedInputValue;
 
-  // Todo: Remove hardcode latitude and longitude
   const { places, isFetching, isSearchEnabled } = usePlaceSearch(
     optionSelected ? '' : debouncedInputValue,
-    '26.852208',
-    '80.862040',
+    originLat,
+    originLng,
   );
 
   return (
@@ -113,7 +118,7 @@ const DestinationField = ({
         >
           <Stack direction="row" spacing={3} className="min-w-0 items-center">
             <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-success/20 text-success">
-              <Icon name="flagCheckered" />
+              <Icon name={selectedIcon} />
             </span>
             <span className="min-w-0">
               <Typography variant="body2" className="truncate font-bold">
