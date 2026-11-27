@@ -162,9 +162,8 @@ const getTripInvite = async (
   userId: string,
   tripId: string,
 ): Promise<PublicTripInvite> => {
-  const invite = await tripRepository.findTripWithDestinationAndHostByTripId(
-    tripId,
-  );
+  const invite =
+    await tripRepository.findTripWithDestinationAndHostByTripId(tripId);
 
   if (!invite) {
     throw new NotFoundError('Trip not found.');
