@@ -86,10 +86,10 @@ const insertTripParticipant = async ({
 }: InsertTripParticipantInput) => {
   const db = getDb();
   const text = `INSERT INTO trip_participants (
-                  trip_id, user_id, is_owner, source_location_id)
+                  trip_row_id, user_id, is_owner, source_location_id)
                 VALUES ($1, $2, $3, $4)
-                ON CONFLICT (trip_id, user_id) DO NOTHING
-                RETURNING id, trip_id, user_id, is_owner, joined_at, source_location_id`;
+                ON CONFLICT (trip_row_id, user_id) DO NOTHING
+                RETURNING id, trip_row_id, user_id, is_owner, joined_at, source_location_id`;
   const values = [tripRowId, userId, isOwner, sourceLocationId];
 
   const result = await db.query<TripParticipantRow>(text, values);
@@ -168,7 +168,7 @@ const findTripWithDestinationAndHostByTripId = async (tripId: string) => {
      LEFT JOIN LATERAL (
        SELECT user_id
        FROM trip_participants
-       WHERE trip_id = t.id AND is_owner = true
+       WHERE trip_row_id = t.id AND is_owner = true
        ORDER BY joined_at, id
        LIMIT 1
      ) owner ON true
@@ -197,9 +197,9 @@ const findTripParticipantByTripRowIdAndUserId = async (
   const db = getDb();
   const result = await db.query<TripParticipantRow>(
     `SELECT
-       id, trip_id, user_id, is_owner, joined_at, source_location_id
+       id, trip_row_id, user_id, is_owner, joined_at, source_location_id
      FROM trip_participants
-     WHERE trip_id = $1 AND user_id = $2`,
+     WHERE trip_row_id = $1 AND user_id = $2`,
     [tripRowId, userId],
   );
 
@@ -209,9 +209,9 @@ const findTripParticipantByTripRowIdAndUserId = async (
 const findTripParticipantsByTripRowId = async (tripRowId: string) => {
   const db = getDb();
   const text = `SELECT
-                  id, trip_id, user_id, is_owner, joined_at, source_location_id
+                  id, trip_row_id, user_id, is_owner, joined_at, source_location_id
                   FROM trip_participants
-                  WHERE trip_id = $1
+                  WHERE trip_row_id = $1
                   ORDER BY joined_at, id ASC`;
   const values = [tripRowId];
   const result = await db.query<TripParticipantRow>(text, values);
@@ -222,9 +222,9 @@ const findTripParticipantsByTripRowId = async (tripRowId: string) => {
 const findTripParticipantsByTripRowIds = async (tripRowIds: string[]) => {
   const db = getDb();
   const text = `SELECT
-                  id, trip_id, user_id, is_owner, joined_at, source_location_id
+                  id, trip_row_id, user_id, is_owner, joined_at, source_location_id
                   FROM trip_participants
-                  WHERE trip_id = ANY($1::uuid[])
+                  WHERE trip_row_id = ANY($1::uuid[])
                   ORDER BY joined_at, id ASC`;
   const values = [tripRowIds];
   const result = await db.query<TripParticipantRow>(text, values);
@@ -246,7 +246,7 @@ const findTripsWithDestinationByUserId = async (userId: string) => {
                 INNER JOIN locations l ON l.id = t.destination_location_id
                 WHERE EXISTS (
                   SELECT 1 FROM trip_participants tp
-                  WHERE tp.trip_id = t.id AND tp.user_id = $1
+                  WHERE tp.trip_row_id = t.id AND tp.user_id = $1
                 )
                 ORDER BY t.arrive_by ASC NULLS LAST, t.id
                 LIMIT $2`;

@@ -136,12 +136,14 @@ const getTrips = async (userId: string): Promise<PublicTripList> => {
   const participantsByTripRowId = new Map<string, TripParticipantRow[]>();
 
   for (const participant of participants) {
-    const tripParticipants = participantsByTripRowId.get(participant.trip_id);
+    const tripParticipants = participantsByTripRowId.get(
+      participant.trip_row_id,
+    );
 
     if (tripParticipants) {
       tripParticipants.push(participant);
     } else {
-      participantsByTripRowId.set(participant.trip_id, [participant]);
+      participantsByTripRowId.set(participant.trip_row_id, [participant]);
     }
   }
 
