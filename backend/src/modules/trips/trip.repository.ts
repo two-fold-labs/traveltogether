@@ -168,7 +168,7 @@ const findTripWithDestinationAndHostByTripId = async (tripId: string) => {
      LEFT JOIN LATERAL (
        SELECT user_id
        FROM trip_participants
-       WHERE trip_id = t.id AND is_owner = true
+       WHERE trip_row_id = t.id AND is_owner = true
        ORDER BY joined_at, id
        LIMIT 1
      ) owner ON true
@@ -197,9 +197,9 @@ const findTripParticipantByTripRowIdAndUserId = async (
   const db = getDb();
   const result = await db.query<TripParticipantRow>(
     `SELECT
-       id, trip_id, user_id, is_owner, joined_at, source_location_id
+       id, trip_row_id, user_id, is_owner, joined_at, source_location_id
      FROM trip_participants
-     WHERE trip_id = $1 AND user_id = $2`,
+     WHERE trip_row_id = $1 AND user_id = $2`,
     [tripRowId, userId],
   );
 
